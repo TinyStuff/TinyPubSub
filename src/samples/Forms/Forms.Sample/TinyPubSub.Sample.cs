@@ -1,8 +1,9 @@
 ﻿using System;
+using TinyPubSubLib;
 
 using Xamarin.Forms;
 
-namespace TinyPubSub.Sample
+namespace TinyPubSubForms.Sample
 {
 	public class App : Application
 	{
@@ -20,6 +21,8 @@ namespace TinyPubSub.Sample
 					}
 				}
 			};
+
+			TinyPubSub.Subscribe ("new-ducks", () => { });
 		}
 
 		protected override void OnStart ()

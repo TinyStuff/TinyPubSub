@@ -4,6 +4,7 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using TinyPubSubForms.Sample;
 
 namespace TinyPubSub.Sample.iOS
 {
@@ -20,4 +21,3 @@ namespace TinyPubSub.Sample.iOS
 		}
 	}
 }
-
