@@ -64,4 +64,13 @@ Or specifically in Xamarin Forms
 TinyPubSub.Unsubscribe(this.BindingContext); // if this is a View and the Binding context the view model
 ```
 
-The tricky part is still knowing when the view is done...
+The tricky part is still knowing when the view is done. One way is to hook up to the navigation page Popped event.
+
+```c#
+// The root page of your application
+var navPage = new NavigationPage(new MainView());
+navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+MainPage = navPage;
+```
+
+This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack.
