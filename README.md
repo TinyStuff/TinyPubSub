@@ -3,6 +3,10 @@ Worlds smallest pub/sub thingy created mostly for Xamarin Forms but should also 
 
 It's not meant to solve world problems so if you want a robust and mature pub/sub framework then there are plenty others out there to use.
 
+## STATE
+
+Alpha
+
 ## NUGET
 
 Not yet, hopefully soon.
