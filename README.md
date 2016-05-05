@@ -40,7 +40,7 @@ var tag = TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
 And when you are done you unsubscribe with that tag.
 
 ```c#
-TinyPubSub.Unsubscribe("new-duck-added");
+TinyPubSub.Unsubscribe(tag);
 ```
 
 #### Plan B - object refs
