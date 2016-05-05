@@ -11,7 +11,12 @@ namespace TinyPubSubForms.Sample
 		public App ()
 		{
 			// The root page of your application
-			MainPage = new NavigationPage(new MainView());
+			var navPage = new NavigationPage(new MainView());
+
+			navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+			navPage.PoppedToRoot += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+			
+			MainPage = navPage;
 		}
 
 		protected override void OnStart ()
@@ -30,4 +35,3 @@ namespace TinyPubSubForms.Sample
 		}
 	}
 }
-

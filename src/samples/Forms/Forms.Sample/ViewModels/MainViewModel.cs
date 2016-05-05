@@ -2,10 +2,11 @@
 using System.Windows.Input;
 using Xamarin.Forms;
 using TinyPubSubLib;
+using Views;
 
 namespace ViewModels
 {
-	public class MainViewModel
+	public class MainViewModel : ViewModelBase 
 	{
 		public MainViewModel ()
 		{
@@ -19,6 +20,14 @@ namespace ViewModels
 			get {
 				return new Command (() => {
 					TinyPubSub.Publish("fire");
+				});
+			}
+		}
+
+		public ICommand NavigateToDuck {
+			get {
+				return new Command (async () => {
+					await Navigation.PushAsync(new DuckView());
 				});
 			}
 		}

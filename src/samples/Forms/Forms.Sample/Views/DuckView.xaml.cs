@@ -6,14 +6,16 @@ using ViewModels;
 
 namespace Views
 {
-	public partial class MainView : ContentPage
+	public partial class DuckView : ContentPage
 	{
-		public MainView()
+		public DuckView ()
 		{
-			InitializeComponent();
-			var vm = new MainViewModel();
+			InitializeComponent ();
+
+			var vm = new DuckViewModel();
 			vm.Navigation = this.Navigation;
 			BindingContext = vm;
 		}
 	}
 }
+
