@@ -39,7 +39,7 @@ And when you are done you unsubscribe with that tag.
 TinyPubSub.Unsubscribe("new-duck-added");
 ```
 
-#### Plan A - object refs
+#### Plan B - object refs
 
 This is a more suitable option for Xamarin MVVM (which is really the reason for this projects existance). I don't like having to keep track of tags. So instead we pass a reference to an object that counts as the owner of the subscription. Usually this and most usually a ViewModel. This way we can subscribe to several channels.
 
