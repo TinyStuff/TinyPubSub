@@ -1,7 +1,18 @@
 # TinyPubSub
 Worlds smallest pub/sub thingy created mostly for Xamarin Forms but should also work else where...
 
-It's not meant to solve world problems so if you want a robust and mature pub/sub framework then there are plenty others out there to use.
+## WHY SHOULD I USE IT?
+
+This lib should be used when you want to easily register to events within a small app. It's not meant for data transfer (at least not at this point), it's not thread safe and it's not finished. :)
+
+### EXAMPLE
+I have a view that shows ducks. This is my main view. When I edit ducks on another view and the main page is covered I still want the main view to get new ducks before I return to it. I don't want the MainPage to start loading when it gets displayed. Then the main view can listen for the "ducks-added" event and run an action when that happens. Later on when I create a new function in the system, I can trust that if I publish an event on the "ducks-added" channel, all my other views subscribing to that event will get notified.
+
+And by following some patterns regarding the NavigationPage(...) we can also make sure that the subscriptions are removed when the view go out of scope.
+
+It's designed with MVVM in mind. Subscription to new events should be done in the ViewModel and the Unsubscription should be made automatically when pages are popped (see usage).
+
+It's not meant to solve world problems so if you want a robust and mature pub/sub framework then there are plenty others out there to use. This is bare metal.
 
 ## STATE
 
