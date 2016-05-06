@@ -73,4 +73,4 @@ navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscri
 MainPage = navPage;
 ```
 
-This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack.
+This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack. There is also a NavigationPage.PoppedToRoot event, but looking at the Xamarin Forms code it simply clears the children without calling popped for each page. I've started a thread about this at the xamarin forums.
