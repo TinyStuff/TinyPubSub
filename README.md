@@ -9,7 +9,9 @@ Alpha
 
 ## NUGET
 
-Not yet, hopefully soon.
+https://www.nuget.org/packages/tinypubsub
+
+Added package for profile 259
 
 ## USAGE
 
