@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A very simple pub/sub implementation for .net/xamarin.</description>
     <releaseNotes>First alpha release.</releaseNotes>
-    <copyright>Copyright 2016</copyright>
+    <copyright>Copyright 2016 - Johan Karlsson</copyright>
     <tags>Xamarin pubsub</tags>
   </metadata>
   <files>

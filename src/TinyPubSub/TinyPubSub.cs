@@ -1,4 +1,28 @@
-﻿using System;
+﻿/*
+ * The MIT License (MIT)
+ * Copyright (c) 2016 Johan Karlsson
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy 
+ * of this software and associated documentation files (the "Software"), to deal 
+ * in the Software without restriction, including without limitation the rights 
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+ * copies of the Software, and to permit persons to whom the Software is furnished 
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in 
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -8,7 +32,7 @@ namespace TinyPubSubLib
 	{
 		private static Dictionary<string, List<Subscription>> _channels = new Dictionary<string, List<Subscription>>();
 
-		static List<Subscription> GetOrCreateChannel(string channel)
+		private static List<Subscription> GetOrCreateChannel(string channel)
 		{
 			List<Subscription> subscriptions;
 			if (!_channels.ContainsKey (channel)) {
@@ -21,7 +45,7 @@ namespace TinyPubSubLib
 			return subscriptions;
 		}
 
-		static Subscription CreateSubscription (object owner, string channel, Action action)
+		private static Subscription CreateSubscription (object owner, string channel, Action action)
 		{
 			var current = GetOrCreateChannel (channel);
 			var subscription = new Subscription (owner, action);
@@ -41,6 +65,15 @@ namespace TinyPubSubLib
 			return subscription.Tag;
 		}
 
+		/// <summary>
+		/// Subscribe to a channel
+		/// </summary>
+		/// <param name="owner">The owner of the subscription</param> 
+		/// <param name="channel">The channel name</param>
+		/// <param name="action">The action to run</param>
+		/// <returns>A tag that can be used to unsubscribe</returns>
+		/// <remarks>The owner can be used to make a mass-unsubscription by 
+		/// calling Unsubcribe and pass the same object.</remarks>
 		public static string Subscribe(object owner, string channel, Action action)
 		{
 			var subscription = CreateSubscription (owner, channel, action);
@@ -69,6 +102,10 @@ namespace TinyPubSubLib
 			}
 		}
 
+		/// <summary>
+		/// Publish an event the specified channel.
+		/// </summary>
+		/// <param name="channel">The channel name</param>
 		public static void Publish(string channel)
 		{
 			if (_channels.ContainsKey (channel)) {
@@ -80,30 +117,11 @@ namespace TinyPubSubLib
 					}
 					catch(Exception) 
 					{
+						// We should not have exceptions leaking all the way up here.
 						current.Remove(subscription);
 					}
 				}
 			}
-		}
-	}
-
-	public class Subscription
-	{
-		public Action Action { get; set; }
-		public string Tag { get; set; }
-		public object Owner { get; set; }
-
-		public Subscription (Action action)
-		{
-			Action = action;
-			Tag = Guid.NewGuid().ToString();
-		}
-
-		public Subscription (object owner, Action action)
-		{
-			Action = action;
-			Tag = Guid.NewGuid().ToString();
-			Owner = owner;
 		}
 	}
 }
