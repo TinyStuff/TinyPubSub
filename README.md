@@ -88,3 +88,7 @@ MainPage = navPage;
 ```
 
 This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack. There is also a NavigationPage.PoppedToRoot event, but looking at the Xamarin Forms code it simply clears the children without calling popped for each page. I've started a thread about this at the xamarin forums.
+
+# UPDATE
+
+I'm currently awaiting a code change in Xamarin Forms Core that will allow for knowing what pages that are cleared when calling PoppedToRoot. This will allow for deregistration in a much better way and make this library more usable.
