@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>tinypubsub</id>
-    <version>0.0.1-alpha</version>
+    <version>1.0.0</version>
     <title>TinyPubSub</title>
     <authors>johankson</authors>
     <owners>johankson</owners>
@@ -10,11 +10,11 @@
     <projectUrl>https://github.com/johankson/TinyPubSub</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A very simple pub/sub implementation for .net/xamarin.</description>
-    <releaseNotes>First alpha release.</releaseNotes>
+    <releaseNotes>First stable release.</releaseNotes>
     <copyright>Copyright 2016 - Johan Karlsson</copyright>
     <tags>Xamarin pubsub</tags>
   </metadata>
   <files>
-    <file src="/bin/debug/TinyPubSub.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
+    <file src="/bin/release/TinyPubSub.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
   </files>
 </package>
