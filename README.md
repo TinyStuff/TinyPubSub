@@ -1,7 +1,22 @@
 # TinyPubSub
-Worlds smallest pub/sub thingy created mostly for Xamarin Forms but should also work else where...
+<del>Worlds smallest</del> A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
+
+##TLDR
+
+Subscribe
+
+```c#
+TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
+```
+Publish
+
+```c#
+TinyPubSub.Publish("new-duck-added");
+```
 
 ## WHY SHOULD I USE IT?
+
+<img align="right" src="http://i.imgur.com/p0xJYYC.png">
 
 This lib should be used when you want to easily register to events within a small app. It's not meant for data transfer (at least not at this point), it's not thread safe and it's never going to be finished. :)
 
