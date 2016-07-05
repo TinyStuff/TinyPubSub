@@ -51,6 +51,10 @@
       <Project>{9D40C2E9-9CB5-46A9-AD93-81CF6BC6FAA1}</Project>
       <Name>TinyPubSub</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\TinyPubSub.Forms\TinyPubSub.Forms.csproj">
+      <Project>{13AF513D-24AB-48A2-B047-1C8EF1D2392C}</Project>
+      <Name>TinyPubSub.Forms</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">

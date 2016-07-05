@@ -10,11 +10,16 @@ namespace TinyPubSubForms.Sample
 	{
 		public App ()
 		{
+            // If you are using forms, then Init before setting the main view to automate the
+            // unsubscription of events.
+            TinyPubSubLib.TinyPubSubForms.Init(this);
+
 			// The root page of your application
 			var navPage = new NavigationPage(new MainView());
 
-			navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
-			navPage.PoppedToRoot += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+            // If you don't use the TinyPubSubForms.Init(..) method you can register the events yourself like this
+			// navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+			// navPage.PoppedToRoot += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
 			
 			MainPage = navPage;
 		}

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>tinypubsub.forms</id>
+    <version>1.0.0-pre1</version>
+    <title>TinyPubSub.Forms</title>
+    <authors>johankson</authors>
+    <owners>johankson</owners>
+    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/johankson/TinyPubSub</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Forms initialization helper for TinyPubSub</description>
+    <releaseNotes>First stable release.</releaseNotes>
+    <copyright>Copyright 2016 - Johan Karlsson</copyright>
+    <tags>Xamarin pubsub</tags>
+    <iconUrl>http://i.imgur.com/p0xJYYC.png</iconUrl>
+	<dependencies>
+		<dependency id="TinyPubSub" version="1.0.0" />
+		<dependency id="Xamarin.Forms" version="2.2.0.31" />	
+	</dependencies>
+  	</metadata>
+  <files>
+    <file src="/bin/release/TinyPubSub.Forms.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
+  </files>
+
+</package>

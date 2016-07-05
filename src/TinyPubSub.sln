@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyPubSub", "TinyPubSub\Ti
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dist", "Dist", "{A743029B-3BB4-4AF5-8245-E6D4C76D7357}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyPubSub.Forms", "TinyPubSub.Forms\TinyPubSub.Forms.csproj", "{13AF513D-24AB-48A2-B047-1C8EF1D2392C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,18 @@ Global
 		{A1258ABE-5D5F-46FA-AF37-00D37EF9D436}.Release|iPhone.Build.0 = Release|Any CPU
 		{A1258ABE-5D5F-46FA-AF37-00D37EF9D436}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{A1258ABE-5D5F-46FA-AF37-00D37EF9D436}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Release|iPhone.Build.0 = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{13AF513D-24AB-48A2-B047-1C8EF1D2392C}.Debug|iPhone.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A1258ABE-5D5F-46FA-AF37-00D37EF9D436} = {26E23983-3BE9-4A60-9A25-EB4CC67EFAAB}
