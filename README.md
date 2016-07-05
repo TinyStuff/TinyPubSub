@@ -84,7 +84,9 @@ TinyPubSub.Publish("new-duck-added");
 
 ### WHAT ABOUT MEMORY ISSUES?
 
-Oh, yes... Working on that. Currently following up two possible ways of making it simple.
+If you are using the Xamarin Forms version (TinyPubSub.Forms) and call the Init(..) method as described at the top of this page, then you have no worries. The lib will take care of deregistration just in time.
+
+If you use the vanilla version, continue reading.
 
 #### Plan A - tags
 

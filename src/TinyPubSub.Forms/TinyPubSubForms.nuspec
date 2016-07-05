@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>tinypubsub.forms</id>
-    <version>1.0.0-pre1</version>
+    <version>1.0.0</version>
     <title>TinyPubSub.Forms</title>
     <authors>johankson</authors>
     <owners>johankson</owners>
