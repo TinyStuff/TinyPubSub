@@ -3,14 +3,34 @@
 
 ##TLDR
 
+Init - if you are using forms, install the TinyPubSub.Forms package
+
+```csharp
+public App ()
+{
+    // If you are using forms
+    TinyPubSubLib.TinyPubSubForms.Init(this);
+
+	// The root page of your application
+	var navPage = new NavigationPage(new MainView());
+
+    // If you don't use the TinyPubSubForms.Init(..) method you can register the events yourself like this
+	// navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+	// navPage.PoppedToRoot += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+	
+	MainPage = navPage;
+}
+
+```
+
 Subscribe
 
-```c#
+```csharp
 TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
 ```
 Publish
 
-```c#
+```csharp
 TinyPubSub.Publish("new-duck-added");
 ```
 
@@ -37,9 +57,16 @@ Release
 
 ## NUGET
 
-https://www.nuget.org/packages/tinypubsub
+Package are built for profile 259.
 
-Added package for profile 259
+###Forms
+If you are using TinyPubSub from Xamarin forms, install this package and call the init method as described at the top. You don't have to install any other package.
+
+[https://www.nuget.org/packages/tinypubsub.forms](https://www.nuget.org/packages/tinypubsub.forms)
+
+###Vanilla
+[https://www.nuget.org/packages/tinypubsub](https://www.nuget.org/packages/tinypubsub)
+
 
 ## USAGE
 
