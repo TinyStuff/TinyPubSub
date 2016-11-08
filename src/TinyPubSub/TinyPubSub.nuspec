@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/johankson/TinyPubSub</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A very simple pub/sub implementation for .net/xamarin.</description>
-    <releaseNotes>First stable release.</releaseNotes>
+    <releaseNotes>Updated to make use of the new PoppedToEventRootArguments in the Navigator</releaseNotes>
     <copyright>Copyright 2016 - Johan Karlsson</copyright>
     <tags>Xamarin pubsub</tags>
   </metadata>

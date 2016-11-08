@@ -59,7 +59,14 @@ namespace TinyPubSubLib
         static void BindEvents(NavigationPage page)
         {
             page.Popped += (s, args) => TinyPubSub.Unsubscribe(args.Page.BindingContext);
-            // TODO Add PoppedToRoot handler when proposal-0002 gets merged and shipped
+			page.PoppedToRoot += (s, args) =>
+			{
+				var poppedToRootEventArgs = args as PoppedToRootEventArgs;
+				foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
+				{
+					TinyPubSub.Unsubscribe(poppedPage.BindingContext);
+				}
+			};
         }
     }
 }
