@@ -32,8 +32,14 @@ public App ()
 Subscribe
 
 ```csharp
+// The forms way (from ViewModel)
+TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });
+
+// Non-forms way
 TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
 ```
+
+
 Publish
 
 ```csharp
