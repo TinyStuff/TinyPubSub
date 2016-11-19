@@ -16,8 +16,14 @@ public App ()
 
     // If you don't use the TinyPubSubForms.Init(..) method you can register the events yourself like this
 	// navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
-	// navPage.PoppedToRoot += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
-	
+	// navpage.PoppedToRoot += (s, args) =>
+	//		{
+	//			var poppedToRootEventArgs = args as PoppedToRootEventArgs;
+	//			foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
+	//			{
+	//				TinyPubSub.Unsubscribe(poppedPage.BindingContext);
+	//			}
+	//		};
 	MainPage = navPage;
 }
 
@@ -26,8 +32,14 @@ public App ()
 Subscribe
 
 ```csharp
+// The forms way (from ViewModel)
+TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });
+
+// Non-forms way
 TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
 ```
+
+
 Publish
 
 ```csharp
@@ -53,7 +65,7 @@ It's not meant to solve world problems so if you want a robust and mature pub/su
 
 ## STATE
 
-Release
+Release (1.0 for TinyPubSub and 1.1 for TinyPubSub.Forms)
 
 ## NUGET
 
@@ -84,7 +96,10 @@ TinyPubSub.Publish("new-duck-added");
 
 ### WHAT ABOUT MEMORY ISSUES?
 
-If you are using the Xamarin Forms version (TinyPubSub.Forms) and call the Init(..) method as described at the top of this page, then you have no worries. The lib will take care of deregistration just in time.
+If you are using the Xamarin Forms version (TinyPubSub.Forms) and call the Init(..) method as described at the top of this page, then you have no worries. The lib will take care of deregistration just in time given that you take two things into consideration.
+
+* You register your subscriptions from the ViewModel (whatever object you bind to BindingContext) or the page it self
+* You pass in `this` into the subscription registration like `TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });`
 
 If you use the vanilla version, continue reading.
 
@@ -123,17 +138,22 @@ Or specifically in Xamarin Forms
 TinyPubSub.Unsubscribe(this.BindingContext); // if this is a View and the Binding context the view model
 ```
 
-The tricky part is still knowing when the view is done. One way is to hook up to the navigation page Popped event.
+The tricky part is still knowing when the view is done. One way is to hook up to the navigation page Popped and PoppedToRoot (if Forms, but then just use TinyPubSub.Forms package instead).
 
 ```c#
 // The root page of your application
 var navPage = new NavigationPage(new MainView());
 navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+navpage.PoppedToRoot += (s, args) =>
+			{
+				var poppedToRootEventArgs = args as PoppedToRootEventArgs;
+				foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
+				{
+					TinyPubSub.Unsubscribe(poppedPage.BindingContext);
+				}
+			};
 MainPage = navPage;
 ```
+<del>This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack. There is also a NavigationPage.PoppedToRoot event, but looking at the Xamarin Forms code it simply clears the children without calling popped for each page. I've started a thread about this at the xamarin forums. </del>
 
-This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack. There is also a NavigationPage.PoppedToRoot event, but looking at the Xamarin Forms code it simply clears the children without calling popped for each page. I've started a thread about this at the xamarin forums.
-
-# UPDATE
-
-I'm currently awaiting a code change in Xamarin Forms Core that will allow for knowing what pages that are cleared when calling PoppedToRoot. This will allow for deregistration in a much better way and make this library more usable.
+I got some new code into the Xamarin Forms Core Navigation stuff so now we can get information on what pages that are popped.
