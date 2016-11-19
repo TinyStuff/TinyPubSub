@@ -64,7 +64,8 @@ namespace TinyPubSubLib
 				var poppedToRootEventArgs = args as PoppedToRootEventArgs;
 				foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
 				{
-					TinyPubSub.Unsubscribe(poppedPage.BindingContext);
+					TinyPubSub.Unsubscribe(poppedPage);
+					TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
 				}
 			};
         }

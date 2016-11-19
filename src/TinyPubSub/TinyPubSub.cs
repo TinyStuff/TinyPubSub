@@ -93,6 +93,11 @@ namespace TinyPubSubLib
 
 		public static void Unsubscribe(object owner)
 		{
+			if (owner == null)
+			{
+				return;
+			}
+
 			foreach (var channel in _channels) {
 				foreach (var subscription in channel.Value.ToList()) {
 					if (subscription.Owner == owner) {
@@ -108,6 +113,11 @@ namespace TinyPubSubLib
 		/// <param name="channel">The channel name</param>
 		public static void Publish(string channel)
 		{
+			if (string.IsNullOrWhiteSpace(channel))
+			{
+				throw new ArgumentException("You have to specify a channel to publish to");
+			}
+
 			if (_channels.ContainsKey (channel)) {
 				var current = _channels [channel];
 				foreach (var subscription in current.ToList()) {
