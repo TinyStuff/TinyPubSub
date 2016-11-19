@@ -96,7 +96,10 @@ TinyPubSub.Publish("new-duck-added");
 
 ### WHAT ABOUT MEMORY ISSUES?
 
-If you are using the Xamarin Forms version (TinyPubSub.Forms) and call the Init(..) method as described at the top of this page, then you have no worries. The lib will take care of deregistration just in time.
+If you are using the Xamarin Forms version (TinyPubSub.Forms) and call the Init(..) method as described at the top of this page, then you have no worries. The lib will take care of deregistration just in time given that you take two things into consideration.
+
+* You register your subscriptions from the ViewModel (whatever object you bind to BindingContext) or the page it self
+* You pass in `this` into the subscription registration like `TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });`
 
 If you use the vanilla version, continue reading.
 
