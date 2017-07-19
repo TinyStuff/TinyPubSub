@@ -53,6 +53,14 @@ namespace TinyPubSubLib
 			return subscription;
 		}
 
+        private static Subscription CreateSubscription (object owner, string channel, Action<string> action)
+        {
+            var current = GetOrCreateChannel(channel);
+            var subscription = new Subscription(owner, action);
+            current.Add(subscription);
+            return subscription;
+        }
+
 		/// <summary>
 		/// Subscribe to a channel
 		/// </summary>
@@ -64,6 +72,12 @@ namespace TinyPubSubLib
 			var subscription = CreateSubscription (null, channel, action);
 			return subscription.Tag;
 		}
+
+        public static string Subscribe(string channel, Action<string> action)
+        {
+            var subscription = CreateSubscription(null, channel, action);
+            return subscription.Tag;
+        }
 
 		/// <summary>
 		/// Subscribe to a channel
@@ -80,7 +94,13 @@ namespace TinyPubSubLib
 			return subscription.Tag;
 		}
 
-		public static void Unsubscribe(string tag)
+        public static string Subscribe(object owner, string channel, Action<string> action)
+        {
+            var subscription = CreateSubscription(owner, channel, action);
+            return subscription.Tag;
+        }
+
+        public static void Unsubscribe(string tag)
 		{
 			foreach (var channel in _channels) {
 				foreach (var subscription in channel.Value.ToList()) {
@@ -111,7 +131,7 @@ namespace TinyPubSubLib
 		/// Publish an event the specified channel.
 		/// </summary>
 		/// <param name="channel">The channel name</param>
-		public static void Publish(string channel)
+		public static void Publish(string channel, string argument = default(string))
 		{
 			if (string.IsNullOrWhiteSpace(channel))
 			{
@@ -123,7 +143,16 @@ namespace TinyPubSubLib
 				foreach (var subscription in current.ToList()) {
 					try
 					{
-						subscription.Action();
+                        /*  if(argument != null && subscription.ActionWithArgument != null)
+                          {
+                              subscription.ActionWithArgument(argument);
+                          }
+                          else
+                          {
+                              subscription.Action();
+                          } */
+                        subscription.Action?.Invoke();
+                        subscription.ActionWithArgument?.Invoke(argument);
 					}
 					catch(Exception) 
 					{
@@ -133,5 +162,10 @@ namespace TinyPubSubLib
 				}
 			}
 		}
+
+        public static void Clear()
+        {
+            _channels.Clear();
+        }
 	}
 }

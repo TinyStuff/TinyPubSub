@@ -31,6 +31,7 @@ namespace TinyPubSubLib
 	public class Subscription
 	{
 		public Action Action { get; set; }
+        public Action<string> ActionWithArgument { get; set; }
 		public string Tag { get; set; }
 		public object Owner { get; set; }
 
@@ -40,11 +41,24 @@ namespace TinyPubSubLib
 			Tag = Guid.NewGuid().ToString();
 		}
 
+        public Subscription (Action<string> action)
+        {
+            ActionWithArgument = action;
+            Tag = Guid.NewGuid().ToString();
+        }
+
 		public Subscription (object owner, Action action)
 		{
 			Action = action;
 			Tag = Guid.NewGuid().ToString();
 			Owner = owner;
 		}
+
+        public Subscription (object owner, Action<string> action)
+        {
+            ActionWithArgument = action;
+            Tag = Guid.NewGuid().ToString();
+            Owner = owner;
+        }
 	}
 }
