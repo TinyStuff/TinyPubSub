@@ -13,8 +13,9 @@
     <releaseNotes>Updated to make use of the new PoppedToEventRootArguments in the Navigator</releaseNotes>
     <copyright>Copyright 2016 - Johan Karlsson</copyright>
     <tags>Xamarin pubsub</tags>
+    <iconUrl>http://i.imgur.com/p0xJYYC.png</iconUrl>
   </metadata>
   <files>
-    <file src="/bin/release/TinyPubSub.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
+    <file src="/bin/release-ci/TinyPubSub.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
   </files>
 </package>

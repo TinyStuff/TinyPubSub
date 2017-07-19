@@ -20,7 +20,7 @@
 	</dependencies>
   	</metadata>
   <files>
-    <file src="bin/release/TinyPubSub.Forms.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
+    <file src="bin/release-ci/TinyPubSub.Forms.dll" target="lib/portable-net45+netcore45+wpa81+wp8"/>
   </files>
 
 </package>
