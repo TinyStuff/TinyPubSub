@@ -8,12 +8,13 @@
 
   <PropertyGroup>
     <PackageId>tinypubsub</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <Authors>johankson and dhindrik</Authors>
     <Description>A very simple pub/sub implementation for .net/xamarin.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Updated package to netstandard 1.0</PackageReleaseNotes>
     <Copyright>Copyright 2017 - Johan Karlsson and Daniel Hindrikes</Copyright>
     <PackageTags>Xamarin pubsub</PackageTags>
+    <PackageIconUrl>http://i.imgur.com/p0xJYYC.png</PackageIconUrl>
   </PropertyGroup>
 </Project>
