@@ -5,7 +5,7 @@
 
 ![buildstatus](https://io2gamelabs.visualstudio.com/_apis/public/build/definitions/be16d002-5786-41a1-bf3b-3e13d5e80aa0/5/badge)
 
-##TLDR
+## TLDR
 
 Init - if you are using forms, install the TinyPubSub.Forms package
 
@@ -15,20 +15,20 @@ public App ()
     // If you are using forms
     TinyPubSubLib.TinyPubSubForms.Init(this);
 
-	// The root page of your application
-	var navPage = new NavigationPage(new MainView());
+    // The root page of your application
+    var navPage = new NavigationPage(new MainView());
 
     // If you don't use the TinyPubSubForms.Init(..) method you can register the events yourself like this
-	// navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
-	// navpage.PoppedToRoot += (s, args) =>
-	//		{
-	//			var poppedToRootEventArgs = args as PoppedToRootEventArgs;
-	//			foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
-	//			{
-	//				TinyPubSub.Unsubscribe(poppedPage.BindingContext);
-	//			}
-	//		};
-	MainPage = navPage;
+    // navPage.Popped += (object sender, NavigationEventArgs e) => TinyPubSub.Unsubscribe(e.Page.BindingContext);
+    // navpage.PoppedToRoot += (s, args) =>
+    //		{
+    //			var poppedToRootEventArgs = args as PoppedToRootEventArgs;
+    //			foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
+    //			{
+    //				TinyPubSub.Unsubscribe(poppedPage.BindingContext);
+    //			}
+    //		};
+    MainPage = navPage;
 }
 
 ```
@@ -75,12 +75,12 @@ Release (1.0 for TinyPubSub and 1.1 for TinyPubSub.Forms)
 
 Package are built for profile 259.
 
-###Forms
+### Forms
 If you are using TinyPubSub from Xamarin forms, install this package and call the init method as described at the top. You don't have to install any other package.
 
 [https://www.nuget.org/packages/tinypubsub.forms](https://www.nuget.org/packages/tinypubsub.forms)
 
-###Vanilla
+### Vanilla
 [https://www.nuget.org/packages/tinypubsub](https://www.nuget.org/packages/tinypubsub)
 
 
