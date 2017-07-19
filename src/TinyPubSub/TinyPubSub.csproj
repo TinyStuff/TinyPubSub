@@ -4,4 +4,6 @@
     <TargetFramework>netstandard1.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CI|AnyCPU'" />
+
 </Project>

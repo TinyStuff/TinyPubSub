@@ -7,6 +7,8 @@
     </PackageTargetFallback>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CI|AnyCPU'" />
+
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="2.3.4.247" />
   </ItemGroup>
