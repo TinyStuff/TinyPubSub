@@ -1,6 +1,10 @@
 # TinyPubSub
 <del>Worlds smallest</del> A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
 
+## Build status
+
+https://io2gamelabs.visualstudio.com/_apis/public/build/definitions/be16d002-5786-41a1-bf3b-3e13d5e80aa0/5/badge
+
 ##TLDR
 
 Init - if you are using forms, install the TinyPubSub.Forms package
