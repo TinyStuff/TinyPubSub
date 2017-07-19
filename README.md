@@ -69,11 +69,11 @@ It's not meant to solve world problems so if you want a robust and mature pub/su
 
 ## STATE
 
-Release (1.0 for TinyPubSub and 1.1 for TinyPubSub.Forms)
+Release (1.2.x for TinyPubSub and 1.2.x for TinyPubSub.Forms)
 
 ## NUGET
 
-Package are built for profile 259.
+Package 1.0.x and 1.1.x are built for profile 259. Packaged 1.2.x are built using netstandard 1.0.
 
 ### Forms
 If you are using TinyPubSub from Xamarin forms, install this package and call the init method as described at the top. You don't have to install any other package.
