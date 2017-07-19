@@ -3,7 +3,7 @@
 
 ## Build status
 
-https://io2gamelabs.visualstudio.com/_apis/public/build/definitions/be16d002-5786-41a1-bf3b-3e13d5e80aa0/5/badge
+![buildstatus](https://io2gamelabs.visualstudio.com/_apis/public/build/definitions/be16d002-5786-41a1-bf3b-3e13d5e80aa0/5/badge)
 
 ##TLDR
 
