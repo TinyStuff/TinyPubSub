@@ -17,4 +17,19 @@
     <ProjectReference Include="..\TinyPubSub\TinyPubSub.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackageId>tinypubsub.forms</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>johankson and dhindrik</Authors>
+    <Description>Forms initialization helper for TinyPubSub</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Updated package to netstandard 1.0</PackageReleaseNotes>
+    <Copyright>Copyright 2017 - Johan Karlsson and Daniel Hindrikes</Copyright>
+    <PackageTags>Xamarin pubsub</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TinyPubSub" Version="1.2.0" />
+  </ItemGroup>
+  
 </Project>
