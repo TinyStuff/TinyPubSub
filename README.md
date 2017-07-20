@@ -1,5 +1,6 @@
 # TinyPubSub
 <del>Worlds smallest</del> A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
+In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, async publish.
 
 ## Build status
 
@@ -10,6 +11,8 @@
 Init - if you are using forms, install the TinyPubSub.Forms package
 
 ```csharp
+
+// If you are using Xamarin
 public App ()
 {
     // If you are using forms
@@ -30,6 +33,7 @@ public App ()
     //		};
     MainPage = navPage;
 }
+ 
 
 ```
 
@@ -37,17 +41,40 @@ Subscribe
 
 ```csharp
 // The forms way (from ViewModel)
-TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });
+TinyPubSub.Subscribe(this, "new-duck-added", () => RebindDuckGui());
 
 // Non-forms way
-TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
+TinyPubSub.Subscribe("new-duck-added", () => RebindDuckGui());
+
+// The forms way (from ViewModel) with an argument
+TinyPubSub.Subscribe(this, "new-duck-added", (x) => RebindDuckGui(nameofduck: x));
+
+// Non-forms way
+TinyPubSub.Subscribe("new-duck-added", (x) => RebindDuckGui(nameofduck: x));
 ```
 
 
 Publish
 
 ```csharp
+// Without argument
 TinyPubSub.Publish("new-duck-added");
+
+// With argument
+TinyPubSub.Publish("new-duck-added", "Ducky McDuckface");
+
+// As a task (that runs later on)
+TinyPubSub.PublishAsTask("new-duck-added");
+
+// As a task (that runs later on) with argument
+TinyPubSub.PublishAsTask("new-duck-added", "Ducky McDuckface);
+
+// Async
+await TinyPubSub.PublishAsync("new-duck-added");
+
+// Async with argument
+await TinyPubSub.PublishAsync("new-duck-added");
+
 ```
 
 ## WHY SHOULD I USE IT?
@@ -88,14 +115,22 @@ If you are using TinyPubSub from Xamarin forms, install this package and call th
 
 To subscribe, simply register what "channel" (we call them channels) you would like to subscribe to.
 
-```c#
+```csharp
 TinyPubSub.Subscribe("new-duck-added", () => { RebindDuckGui(); });
 ```
 
 And in another part of you application, publish events to execute the actions that are registered for that channel.
 
-```c#
-TinyPubSub.Publish("new-duck-added");
+```csharp
+
+// Sync publish with or without argument
+TinyPubSub.Publish("new-duck-added", "optional argument");
+
+// As a task (fire and forget)
+TinyPubSub.PublishAsTask("new-duck-added", "optional argument");
+
+// As an async call
+await TinyPubSub.PublishAsync("new-duck-added", "optional argument");
 ```
 
 ### WHAT ABOUT MEMORY ISSUES?

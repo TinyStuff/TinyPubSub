@@ -25,6 +25,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TinyPubSubLib
 {
@@ -35,11 +36,13 @@ namespace TinyPubSubLib
 		private static List<Subscription> GetOrCreateChannel(string channel)
 		{
 			List<Subscription> subscriptions;
-			if (!_channels.ContainsKey (channel)) {
+			if (!_channels.ContainsKey (channel))
+            {
 				subscriptions = new List<Subscription> ();
 				_channels.Add (channel, subscriptions);
 			}
-			else {
+			else
+            {
 				subscriptions = _channels [channel];
 			}
 			return subscriptions;
@@ -61,13 +64,13 @@ namespace TinyPubSubLib
             return subscription;
         }
 
-		/// <summary>
-		/// Subscribe to a channel
-		/// </summary>
-		/// <param name="channel">The channel name</param>
-		/// <param name="action">The action to run</param>
-		/// <returns>A tag that can be used to unsubscribe</returns>
-		public static string Subscribe(string channel, Action action)
+        /// <summary>
+        /// Subscribe to a channel
+        /// </summary>
+        /// <param name="channel">The channel name</param>
+        /// <param name="action">The action to run</param>
+        /// <returns>A tag that can be used to unsubscribe</returns>
+        public static string Subscribe(string channel, Action action)
 		{
 			var subscription = CreateSubscription (null, channel, action);
 			return subscription.Tag;
@@ -133,6 +136,10 @@ namespace TinyPubSubLib
 			}
 		}
 
+        /// <summary>
+        /// Unsubscribes to a channel based on an object owner
+        /// </summary>
+        /// <param name="owner"></param>
 		public static void Unsubscribe(object owner)
 		{
 			if (owner == null)
@@ -182,6 +189,33 @@ namespace TinyPubSubLib
 			}
 		}
 
+        /// <summary>
+        /// Publish using Task.Run
+        /// </summary>
+        /// <param name="channel">The channel to publish to</param>
+        /// <param name="argument">An optional parameter</param>
+        /// <remarks>This method is not blocking, it simply uses a Task.Run(() => Publish(...)) internally
+        /// to hand of the call to be handled by someone else.</remarks>
+        public static void PublishAsTask(string channel, string argument = default(string))
+        {
+            // Add to delayed handle queue
+            Task.Run(() => Publish(channel, argument));
+        }
+
+        /// <summary>
+        /// Publish async
+        /// </summary>
+        /// <param name="channel">The channel to publish to</param>
+        /// <param name="argument">An optional parameter</param>
+        /// <returns>A task</returns>
+        public static async Task PublishAsync(string channel, string argument = default(string))
+        {
+            await Task.Run(() => Publish(channel, argument));
+        }
+
+        /// <summary>
+        /// Clears all channels
+        /// </summary>
         public static void Clear()
         {
             _channels.Clear();

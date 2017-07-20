@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace TinyPubSub.Tests
 {
@@ -68,5 +69,62 @@ namespace TinyPubSub.Tests
             Assert.IsTrue(testsuccessful);
         }
 
+        [TestMethod]
+        public async Task DelayedSubscribePublishTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", () => testsuccessful = true);
+
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishAsTask("test");
+            await Task.Delay(100);
+
+            // Assert
+            Assert.IsTrue(testsuccessful);
+        }
+
+        [TestMethod]
+        public void DelayedSubscribePublishNotWaitingForCompletionTest()
+        {
+            // Arrange
+            var testsuccessful = true;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", () => testsuccessful = false);
+
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishAsTask("test");
+
+            // Assert
+            Assert.IsTrue(testsuccessful);
+        }
+
+        [TestMethod]
+        public async Task DelayedSubscribePublishWithArgumentsTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", (x) => testsuccessful = x == "duck");
+
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishAsTask("test", "duck");
+            await Task.Delay(100);
+
+            // Assert
+            Assert.IsTrue(testsuccessful);
+        }
+
+        [TestMethod]
+        public async Task PublishAsyncTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", () => testsuccessful = true);
+
+            // Act
+            await TinyPubSubLib.TinyPubSub.PublishAsync("test");
+
+            // Assert
+            Assert.IsTrue(testsuccessful);
+        }
     }
 }
