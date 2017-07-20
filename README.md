@@ -67,13 +67,13 @@ TinyPubSub.Publish("new-duck-added", "Ducky McDuckface");
 TinyPubSub.PublishAsTask("new-duck-added");
 
 // As a task (that runs later on) with argument
-TinyPubSub.PublishAsTask("new-duck-added", "Ducky McDuckface);
+TinyPubSub.PublishAsTask("new-duck-added", "Ducky McDuckface");
 
 // Async
 await TinyPubSub.PublishAsync("new-duck-added");
 
 // Async with argument
-await TinyPubSub.PublishAsync("new-duck-added");
+await TinyPubSub.PublishAsync("new-duck-added", "Ducky McDuckface");
 
 ```
 
