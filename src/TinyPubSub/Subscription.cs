@@ -28,11 +28,17 @@ using System.Collections.Generic;
 
 namespace TinyPubSubLib
 {
-	public class Subscription
+    /// <summary>
+    /// Represents one subscription
+    /// </summary>
+	internal class Subscription
 	{
 		public Action Action { get; set; }
+
         public Action<string> ActionWithArgument { get; set; }
-		public string Tag { get; set; }
+
+        public string Tag { get; set; }
+
 		public object Owner { get; set; }
 
 		public Subscription (Action action)
