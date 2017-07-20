@@ -1,5 +1,6 @@
 #Autosave files
 *~
+.vs/
 
 #build
 [Oo]bj/
@@ -39,3 +40,4 @@ Thumbs.db
 #dotCover
 *.dotCover
 *.nupkg
+*.bak
