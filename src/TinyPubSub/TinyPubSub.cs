@@ -73,6 +73,12 @@ namespace TinyPubSubLib
 			return subscription.Tag;
 		}
 
+        /// <summary>
+        /// Subscribe to a channel that sends an argument
+        /// </summary>
+        /// <param name="channel">The channel name</param>
+        /// <param name="action">The action to run</param>
+        /// <returns>A tag that can be used to unsubscribe</returns>
         public static string Subscribe(string channel, Action<string> action)
         {
             var subscription = CreateSubscription(null, channel, action);
@@ -94,17 +100,33 @@ namespace TinyPubSubLib
 			return subscription.Tag;
 		}
 
+        /// <summary>
+        /// Subscribe to a channel that sends an argument
+        /// </summary>
+        /// <param name="owner">The owner of the subscription</param> 
+        /// <param name="channel">The channel name</param>
+        /// <param name="action">The action to run</param>
+        /// <returns>A tag that can be used to unsubscribe</returns>
+        /// <remarks>The owner can be used to make a mass-unsubscription by 
+        /// calling Unsubcribe and pass the same object.</remarks>
         public static string Subscribe(object owner, string channel, Action<string> action)
         {
             var subscription = CreateSubscription(owner, channel, action);
             return subscription.Tag;
         }
 
+        /// <summary>
+        /// Unsubscribes to a channel based on a tag
+        /// </summary>
+        /// <param name="tag"></param>
         public static void Unsubscribe(string tag)
 		{
-			foreach (var channel in _channels) {
-				foreach (var subscription in channel.Value.ToList()) {
-					if (subscription.Tag == tag) {
+			foreach (var channel in _channels)
+            {
+				foreach (var subscription in channel.Value.ToList())
+                {
+					if (subscription.Tag == tag)
+                    {
 						channel.Value.Remove (subscription);
 					}
 				}
@@ -118,9 +140,12 @@ namespace TinyPubSubLib
 				return;
 			}
 
-			foreach (var channel in _channels) {
-				foreach (var subscription in channel.Value.ToList()) {
-					if (subscription.Owner == owner) {
+			foreach (var channel in _channels)
+            {
+				foreach (var subscription in channel.Value.ToList())
+                {
+					if (subscription.Owner == owner)
+                    {
 						channel.Value.Remove (subscription);
 					}
 				}
@@ -138,19 +163,13 @@ namespace TinyPubSubLib
 				throw new ArgumentException("You have to specify a channel to publish to");
 			}
 
-			if (_channels.ContainsKey (channel)) {
+			if (_channels.ContainsKey (channel))
+            {
 				var current = _channels [channel];
-				foreach (var subscription in current.ToList()) {
+				foreach (var subscription in current.ToList())
+                {
 					try
 					{
-                        /*  if(argument != null && subscription.ActionWithArgument != null)
-                          {
-                              subscription.ActionWithArgument(argument);
-                          }
-                          else
-                          {
-                              subscription.Action();
-                          } */
                         subscription.Action?.Invoke();
                         subscription.ActionWithArgument?.Invoke(argument);
 					}
