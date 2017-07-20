@@ -34,7 +34,7 @@ namespace TinyPubSub.Tests
             TinyPubSubLib.TinyPubSub.Subscribe("test", () => testsuccessful = true);
 
             // Act
-            TinyPubSubLib.TinyPubSub.Publish("test");
+            TinyPubSubLib.TinyPubSub.Publish("test", "dumbargument");
 
             // Assert
             Assert.IsTrue(testsuccessful);
@@ -53,5 +53,20 @@ namespace TinyPubSub.Tests
             // Assert
             Assert.IsTrue(testsuccessful);
         }
+
+        [TestMethod]
+        public void SubscribePublishTheMostCommonWayTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", () => testsuccessful = true);
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish("test");
+
+            // Assert
+            Assert.IsTrue(testsuccessful);
+        }
+
     }
 }
