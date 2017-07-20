@@ -16,5 +16,7 @@
     <Copyright>Copyright 2017 - Johan Karlsson and Daniel Hindrikes</Copyright>
     <PackageTags>Xamarin pubsub</PackageTags>
     <PackageIconUrl>http://i.imgur.com/p0xJYYC.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/johankson/TinyPubSub</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
   </PropertyGroup>
 </Project>
