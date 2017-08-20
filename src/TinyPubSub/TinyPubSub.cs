@@ -199,7 +199,7 @@ namespace TinyPubSubLib
         public static void PublishAsTask(string channel, string argument = default(string))
         {
             // Add to delayed handle queue
-            Task.Run(() => Publish(channel, argument));
+            Task.Run(() => Publish(channel, argument)).ConfigureAwait(false);
         }
 
         /// <summary>
