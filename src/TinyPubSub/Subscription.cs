@@ -28,20 +28,6 @@ using System.Collections.Generic;
 
 namespace TinyPubSubLib
 {
-    internal interface ISubscription {
-        Action Action { get; set; }
-
-        Action<object> ActionWithArgument { get; }
-
-        string Tag { get; set; }
-
-        Type SubscribeToType { get; set; }
-
-        bool RemoveAfterUse { get; set; }
-
-        object Owner { get; set; }
-    }
-
     /// <summary>
     /// Represents one subscription
     /// </summary>
@@ -76,34 +62,23 @@ namespace TinyPubSubLib
         public Subscription (Action action) : this()
 		{
 			Action = action;
-			//Tag = Guid.NewGuid().ToString();
 		}
 
         public Subscription (Action<T> action) : this()
         {
             ActionWithArgument = action;
             SubscribeToType = typeof(T);
-            //Tag = Guid.NewGuid().ToString();
         }
 
         public Subscription (object owner, Action action) : this(action)
 		{
-			//Action = action;
-			//Tag = Guid.NewGuid().ToString();
 			Owner = owner;
 		}
 
         public Subscription (object owner, Action<T> action) : this(action)
         {
-            //ActionWithArgument = action;
-            //Tag = Guid.NewGuid().ToString();
             Owner = owner;
         }
 	}
-
-    internal class StringSubscription : Subscription<string>
-    {
-
-    }
 
 }

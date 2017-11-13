@@ -174,7 +174,13 @@ namespace TinyPubSubLib
 				}
 			}
 		}
-            
+          
+        /// <summary>
+        /// Publish an event the specified channel with instance argument.
+        /// </summary>
+        /// <param name="channel">The channel name</param>
+        /// <param name="instance">Instance to pass to the receiver.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static void Publish<T>(string channel, T instance) {
             if (string.IsNullOrWhiteSpace(channel))
             {
@@ -186,12 +192,9 @@ namespace TinyPubSubLib
                 foreach (var subscription in current.OfType<Subscription<T>>().ToList())
                 {
                     try
-                    {
-                        //if (instance==null || subscription.SubscribeToType.==instance.GetType()) 
-                        {
-                            subscription.Action?.Invoke();
-                            subscription.ActionWithArgument?.Invoke(instance);
-						}
+                    {                        
+                        subscription.Action?.Invoke();
+                        subscription.ActionWithArgument?.Invoke(instance);
                     }
                     catch (Exception)
                     {

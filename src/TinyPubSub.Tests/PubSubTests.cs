@@ -4,10 +4,12 @@ using Xunit;
 
 namespace TinyPubSub.Tests
 {
+    // Dummy class for instance sending
     public class TestEventType {
         public int Sklep { get; set; } = 5;
     }
 
+    // Dummy class for instance sending with inheritance
     public class InheritedTestEventType : TestEventType {
         public int MyOtherInt { get; set; } = 2;
     }
