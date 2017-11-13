@@ -14,7 +14,13 @@ namespace ViewModels
 				{ 
  					// Do something here, but nuget was down at the time of writing this code
 				});	
+            TinyPubSub.Subscribe<bool>("firebool",(obj) => {
+                _toggleBool = obj;
+
+            });
 		}
+
+        private bool _toggleBool = false;
 
 		public ICommand Fire {
 			get {
@@ -23,6 +29,16 @@ namespace ViewModels
 				});
 			}
 		}
+
+        public ICommand Fire2
+        {
+            get
+            {
+                return new Command(() => {
+                    TinyPubSub.Publish<bool>("firebool",!_toggleBool);
+                });
+            }
+        }
 
 		public ICommand NavigateToDuck {
 			get {

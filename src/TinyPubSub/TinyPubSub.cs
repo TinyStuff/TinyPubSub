@@ -31,14 +31,14 @@ namespace TinyPubSubLib
 {
 	public static class TinyPubSub
 	{
-		private static Dictionary<string, List<Subscription>> _channels = new Dictionary<string, List<Subscription>>();
+		private static Dictionary<string, List<ISubscription>> _channels = new Dictionary<string, List<ISubscription>>();
 
-		private static List<Subscription> GetOrCreateChannel(string channel)
+		private static List<ISubscription> GetOrCreateChannel(string channel)
 		{
-			List<Subscription> subscriptions;
+			List<ISubscription> subscriptions;
 			if (!_channels.ContainsKey (channel))
             {
-				subscriptions = new List<Subscription> ();
+				subscriptions = new List<ISubscription> ();
 				_channels.Add (channel, subscriptions);
 			}
 			else
@@ -48,18 +48,28 @@ namespace TinyPubSubLib
 			return subscriptions;
 		}
 
-		private static Subscription CreateSubscription (object owner, string channel, Action action)
+        private static ISubscription CreateSubscription (object owner, string channel, Action action, bool disableAfterFirstUse = false)
 		{
 			var current = GetOrCreateChannel (channel);
-			var subscription = new Subscription (owner, action);
+            var subscription = new Subscription<string> (owner, action);
+            subscription.RemoveAfterUse = disableAfterFirstUse;
 			current.Add (subscription);
 			return subscription;
 		}
 
-        private static Subscription CreateSubscription (object owner, string channel, Action<string> action)
+        //private static ISubscription CreateSubscription (object owner, string channel, Action<string> action)
+        //{
+        //    var current = GetOrCreateChannel(channel);
+        //    var subscription = new Subscription<string>(owner, action);
+        //    current.Add(subscription);
+        //    return subscription;
+        //}
+
+        private static ISubscription CreateSubscription<T>(object owner, string channel, Action<T> action, bool disableAfterFirstUse = false)
         {
             var current = GetOrCreateChannel(channel);
-            var subscription = new Subscription(owner, action);
+            var subscription = new Subscription<T>(owner, action);
+            subscription.RemoveAfterUse = disableAfterFirstUse;
             current.Add(subscription);
             return subscription;
         }
@@ -114,7 +124,13 @@ namespace TinyPubSubLib
         /// calling Unsubcribe and pass the same object.</remarks>
         public static string Subscribe(object owner, string channel, Action<string> action)
         {
-            var subscription = CreateSubscription(owner, channel, action);
+            var subscription = CreateSubscription<string>(owner, channel, action);
+            return subscription.Tag;
+        }
+
+        public static string Subscribe<T>(string channel, Action<T> action)
+        {
+            var subscription = CreateSubscription<T>(null, channel, action);
             return subscription.Tag;
         }
 
@@ -158,6 +174,33 @@ namespace TinyPubSubLib
 				}
 			}
 		}
+            
+        public static void Publish<T>(string channel, T instance) {
+            if (string.IsNullOrWhiteSpace(channel))
+            {
+                throw new ArgumentException("You have to specify a channel to publish to");
+            }
+            if (_channels.ContainsKey(channel))
+            {
+                var current = _channels[channel];
+                foreach (var subscription in current.OfType<Subscription<T>>().ToList())
+                {
+                    try
+                    {
+                        //if (instance==null || subscription.SubscribeToType.==instance.GetType()) 
+                        {
+                            subscription.Action?.Invoke();
+                            subscription.ActionWithArgument?.Invoke(instance);
+						}
+                    }
+                    catch (Exception)
+                    {
+                        // We should not have exceptions leaking all the way up here.
+                        current.Remove(subscription);
+                    }
+                }
+            }
+        }
 
 		/// <summary>
 		/// Publish an event the specified channel.
@@ -165,28 +208,7 @@ namespace TinyPubSubLib
 		/// <param name="channel">The channel name</param>
 		public static void Publish(string channel, string argument = default(string))
 		{
-			if (string.IsNullOrWhiteSpace(channel))
-			{
-				throw new ArgumentException("You have to specify a channel to publish to");
-			}
-
-			if (_channels.ContainsKey (channel))
-            {
-				var current = _channels [channel];
-				foreach (var subscription in current.ToList())
-                {
-					try
-					{
-                        subscription.Action?.Invoke();
-                        subscription.ActionWithArgument?.Invoke(argument);
-					}
-					catch(Exception) 
-					{
-						// We should not have exceptions leaking all the way up here.
-						current.Remove(subscription);
-					}
-				}
-			}
+            Publish<string>(channel,argument);
 		}
 
         /// <summary>
@@ -220,5 +242,7 @@ namespace TinyPubSubLib
         {
             _channels.Clear();
         }
-	}
+
+       
+    }
 }
