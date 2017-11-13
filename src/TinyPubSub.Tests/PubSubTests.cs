@@ -4,6 +4,16 @@ using Xunit;
 
 namespace TinyPubSub.Tests
 {
+    // Dummy class for instance sending
+    public class TestEventType {
+        public int Sklep { get; set; } = 5;
+    }
+
+    // Dummy class for instance sending with inheritance
+    public class InheritedTestEventType : TestEventType {
+        public int MyOtherInt { get; set; } = 2;
+    }
+
     public class PubSubTests
     {
 		public PubSubTests()
@@ -24,6 +34,36 @@ namespace TinyPubSub.Tests
 			// Assert
             Assert.True(testsuccessful);
 		}
+
+        [Fact]
+        public void SubscribeWithTypeTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            var tstType = new TestEventType();
+            TinyPubSubLib.TinyPubSub.Subscribe<TestEventType>("test", (x) => testsuccessful = (x.Sklep == 5));
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish("test", tstType);
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
+
+        [Fact]
+        public void SubscribeWithTypeInheritanceTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            var tstType = new InheritedTestEventType();
+            TinyPubSubLib.TinyPubSub.Subscribe<TestEventType>("test", (x) => testsuccessful = (x.Sklep == 5));
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish<TestEventType>("test", tstType);
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
 		[Fact]
 		public void SubscribeWithArgumentMissingTest()
@@ -66,6 +106,22 @@ namespace TinyPubSub.Tests
 			// Assert
 			Assert.True(testsuccessful);
 		}
+
+        [Fact]
+        public void SubscribePublishExceptionHandling()
+        {
+            // Arrange
+            var testsuccessful = false;
+
+            var subId = TinyPubSubLib.TinyPubSub.Subscribe("testerror", () => throw new Exception("Error in handling") );
+            TinyPubSubLib.TinyPubSub.Subscribe<TinyPubSubLib.TinyException>(TinyPubSubLib.TinyException.DefaultChannel, (msg) => testsuccessful = msg.SubscriptionTag==subId);
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish("testerror");
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
 		[Fact]
 		public async Task DelayedSubscribePublishTest()

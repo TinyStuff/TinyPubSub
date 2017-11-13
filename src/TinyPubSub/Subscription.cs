@@ -31,40 +31,72 @@ namespace TinyPubSubLib
     /// <summary>
     /// Represents one subscription
     /// </summary>
-	internal class Subscription
+    internal class Subscription<T> : ISubscription
 	{
 		public Action Action { get; set; }
 
-        public Action<string> ActionWithArgument { get; set; }
+        public Action<T> ActionWithArgument { get; set; }
+
+        Action<object> ISubscription.ActionWithArgument 
+        { 
+            get 
+            {
+                return ActionWithArgument as Action<object>;
+            }
+        }
 
         public string Tag { get; set; }
 
+        public Type SubscribeToType { get; set; }
+
 		public object Owner { get; set; }
 
-		public Subscription (Action action)
-		{
-			Action = action;
-			Tag = Guid.NewGuid().ToString();
-		}
+        public bool RemoveAfterUse { get; set; }
 
-        public Subscription (Action<string> action)
-        {
-            ActionWithArgument = action;
+
+        internal Subscription () {
             Tag = Guid.NewGuid().ToString();
+            SubscribeToType = typeof(T);
         }
 
-		public Subscription (object owner, Action action)
+        public Subscription (Action action) : this()
 		{
 			Action = action;
-			Tag = Guid.NewGuid().ToString();
+		}
+
+        public Subscription (Action<T> action) : this()
+        {
+            ActionWithArgument = action;
+            SubscribeToType = typeof(T);
+        }
+
+        public Subscription (object owner, Action action) : this(action)
+		{
 			Owner = owner;
 		}
 
-        public Subscription (object owner, Action<string> action)
+        public Subscription (object owner, Action<T> action) : this(action)
         {
-            ActionWithArgument = action;
-            Tag = Guid.NewGuid().ToString();
             Owner = owner;
         }
 	}
+
+    public class TinyException {
+        
+        public static readonly string DefaultChannel = "TinyException";
+
+        public string Message
+        {
+            get;
+            set;
+        }
+
+        public Exception InnerException
+        {
+            get;
+            set;
+        }
+
+        public string SubscriptionTag { get; set; }
+    }
 }
