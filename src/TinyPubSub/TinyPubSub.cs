@@ -196,20 +196,34 @@ namespace TinyPubSubLib
                         subscription.Action?.Invoke();
                         subscription.ActionWithArgument?.Invoke(instance);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        // Notify error
+                        SendException(ex, subscription.Tag);
                         // We should not have exceptions leaking all the way up here.
                         current.Remove(subscription);
+
                     }
                 }
             }
         }
 
-		/// <summary>
-		/// Publish an event the specified channel.
-		/// </summary>
-		/// <param name="channel">The channel name</param>
-		public static void Publish(string channel, string argument = default(string))
+        private static void SendException(Exception ex, string tag)
+        {
+            var message = new TinyException()
+            {
+                Message = "Error sending event to receiver: " + ex.Message,
+                InnerException = ex,
+                SubscriptionTag = tag
+            };
+            Publish<TinyException>(TinyException.DefaultChannel,message);
+        }
+
+        /// <summary>
+        /// Publish an event the specified channel.
+        /// </summary>
+        /// <param name="channel">The channel name</param>
+        public static void Publish(string channel, string argument = default(string))
 		{
             Publish<string>(channel,argument);
 		}

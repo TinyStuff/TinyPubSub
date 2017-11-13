@@ -81,4 +81,22 @@ namespace TinyPubSubLib
         }
 	}
 
+    public class TinyException {
+        
+        public static readonly string DefaultChannel = "TinyException";
+
+        public string Message
+        {
+            get;
+            set;
+        }
+
+        public Exception InnerException
+        {
+            get;
+            set;
+        }
+
+        public string SubscriptionTag { get; set; }
+    }
 }

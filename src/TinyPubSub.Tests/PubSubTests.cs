@@ -59,7 +59,7 @@ namespace TinyPubSub.Tests
             TinyPubSubLib.TinyPubSub.Subscribe<TestEventType>("test", (x) => testsuccessful = (x.Sklep == 5));
 
             // Act
-            TinyPubSubLib.TinyPubSub.Publish("test", tstType);
+            TinyPubSubLib.TinyPubSub.Publish<TestEventType>("test", tstType);
 
             // Assert
             Assert.True(testsuccessful);
@@ -106,6 +106,22 @@ namespace TinyPubSub.Tests
 			// Assert
 			Assert.True(testsuccessful);
 		}
+
+        [Fact]
+        public void SubscribePublishExceptionHandling()
+        {
+            // Arrange
+            var testsuccessful = false;
+
+            var subId = TinyPubSubLib.TinyPubSub.Subscribe("testerror", () => throw new Exception("Error in handling") );
+            TinyPubSubLib.TinyPubSub.Subscribe<TinyPubSubLib.TinyException>(TinyPubSubLib.TinyException.DefaultChannel, (msg) => testsuccessful = msg.SubscriptionTag==subId);
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish("testerror");
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
 		[Fact]
 		public async Task DelayedSubscribePublishTest()
