@@ -57,14 +57,6 @@ namespace TinyPubSubLib
 			return subscription;
 		}
 
-        //private static ISubscription CreateSubscription (object owner, string channel, Action<string> action)
-        //{
-        //    var current = GetOrCreateChannel(channel);
-        //    var subscription = new Subscription<string>(owner, action);
-        //    current.Add(subscription);
-        //    return subscription;
-        //}
-
         private static ISubscription CreateSubscription<T>(object owner, string channel, Action<T> action, bool disableAfterFirstUse = false)
         {
             var current = GetOrCreateChannel(channel);
@@ -94,7 +86,7 @@ namespace TinyPubSubLib
         /// <returns>A tag that can be used to unsubscribe</returns>
         public static string Subscribe(string channel, Action<string> action)
         {
-            var subscription = CreateSubscription(null, channel, action);
+            var subscription = CreateSubscription<string>(null, channel, action);
             return subscription.Tag;
         }
 
@@ -128,9 +120,30 @@ namespace TinyPubSubLib
             return subscription.Tag;
         }
 
+        /// <summary>
+        /// Subscribe to a channel that sends an argument
+        /// </summary>
+        /// <returns>The subscribe.</returns>
+        /// <param name="channel">The channel name</param>
+        /// <param name="action">The action to run</param>
+        /// <typeparam name="T">The type to subscribe to.</typeparam>
         public static string Subscribe<T>(string channel, Action<T> action)
         {
             var subscription = CreateSubscription<T>(null, channel, action);
+            return subscription.Tag;
+        }
+
+        /// <summary>
+        /// Subscribe to a channel that sends an argument with specified owner
+        /// </summary>
+        /// <returns>The subscribe.</returns>
+        /// /// <param name="owner">The owner of the subscription</param> 
+        /// <param name="channel">The channel name</param>
+        /// <param name="action">The action to run</param>
+        /// <typeparam name="T">The type to subscribe to.</typeparam>
+        public static string Subscribe<T>(string owner, string channel, Action<T> action)
+        {
+            var subscription = CreateSubscription<T>(owner, channel, action);
             return subscription.Tag;
         }
 
