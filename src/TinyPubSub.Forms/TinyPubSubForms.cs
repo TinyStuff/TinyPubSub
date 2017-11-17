@@ -22,6 +22,7 @@
  *
  */
 
+using System;
 using Xamarin.Forms;
 
 namespace TinyPubSubLib
@@ -55,6 +56,29 @@ namespace TinyPubSubLib
                 }
             }
         }
+
+        public static void SubscribeOnMainThread<T>(string owner, string channel, Action<T> action) 
+        {
+            TinyPubSub.Subscribe<T>(owner,channel, (obj) => {
+                Device.BeginInvokeOnMainThread(() => action(obj));   
+            });
+        }
+
+        public static void SubscribeOnMainThread<T>(string channel, Action<T> action)
+        {
+            SubscribeOnMainThread(null, channel, action);
+        }
+
+        public static void SubscribeOnMainThread(string owner, string channel, Action<string> action)
+        {
+            SubscribeOnMainThread<string>(owner, channel, action);
+        }
+
+        public static void SubscribeOnMainThread(string channel, Action<string> action)
+        {
+            SubscribeOnMainThread(null, channel, action);
+        }
+
 
         static void BindEvents(NavigationPage page)
         {

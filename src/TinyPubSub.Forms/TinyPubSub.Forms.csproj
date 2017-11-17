@@ -17,6 +17,9 @@
     <ProjectReference Include="..\TinyPubSub\TinyPubSub.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
   <PropertyGroup>
     <PackageId>tinypubsub.forms</PackageId>
     <PackageVersion>1.2.0</PackageVersion>
