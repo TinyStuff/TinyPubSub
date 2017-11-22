@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 using Xamarin.Forms;
 using TinyPubSubLib;
@@ -32,14 +32,14 @@ namespace ViewModels
 				{ 
  					// Do something here, but nuget was down at the time of writing this code
 				});	
-            TinyPubSub.Subscribe<bool>("firebool",(obj) => {
-                _toggleBool = obj;
+        TinyPubSub.Subscribe<bool>("firebool",(obj) => {
+            _toggleBool = obj;
 
-            });
-            TinyPubSubLib.TinyPubSubForms.SubscribeOnMainThread("onmain", (obj) => {
-                DuckCount++;
-                PropertyChanged(this, new PropertyChangedEventArgs("DuckCount"));
-            });
+        });
+        TinyPubSubLib.TinyPubSubForms.SubscribeOnMainThread("onmain", (obj) => {
+            DuckCount++;
+            PropertyChanged(this, new PropertyChangedEventArgs("DuckCount"));
+        });
 		}
 
         private bool _toggleBool = false;
@@ -61,7 +61,7 @@ namespace ViewModels
                 });
             }
         }
-
+        
         public ICommand Fire3
         {
             get
