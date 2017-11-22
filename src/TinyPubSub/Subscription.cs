@@ -37,6 +37,8 @@ namespace TinyPubSubLib
 
         public Action<T> ActionWithArgument { get; set; }
 
+        public Action<T, TinyEventArgs> ActionWithArgumentAndArgs { get; set; }
+
         Action<object> ISubscription.ActionWithArgument 
         { 
             get 
@@ -79,6 +81,18 @@ namespace TinyPubSubLib
         {
             Owner = owner;
         }
+
+        public Subscription(Action<T, TinyEventArgs> action) : this()
+        {
+            ActionWithArgumentAndArgs = action;
+        }
+
+        public Subscription(object owner, Action<T, TinyEventArgs> action) : this(action)
+        {
+            Owner = owner;
+        }
+
+
 	}
 
     public class TinyException {

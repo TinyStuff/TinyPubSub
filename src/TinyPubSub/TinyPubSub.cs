@@ -29,35 +29,44 @@ using System.Threading.Tasks;
 
 namespace TinyPubSubLib
 {
-	public static class TinyPubSub
-	{
-		private static Dictionary<string, List<ISubscription>> _channels = new Dictionary<string, List<ISubscription>>();
+    public static class TinyPubSub
+    {
+        private static Dictionary<string, List<ISubscription>> _channels = new Dictionary<string, List<ISubscription>>();
 
-		private static List<ISubscription> GetOrCreateChannel(string channel)
-		{
-			List<ISubscription> subscriptions;
-			if (!_channels.ContainsKey (channel))
+        private static List<ISubscription> GetOrCreateChannel(string channel)
+        {
+            List<ISubscription> subscriptions;
+            if (!_channels.ContainsKey(channel))
             {
-				subscriptions = new List<ISubscription> ();
-				_channels.Add (channel, subscriptions);
-			}
-			else
+                subscriptions = new List<ISubscription>();
+                _channels.Add(channel, subscriptions);
+            }
+            else
             {
-				subscriptions = _channels [channel];
-			}
-			return subscriptions;
-		}
+                subscriptions = _channels[channel];
+            }
+            return subscriptions;
+        }
 
-        private static ISubscription CreateSubscription (object owner, string channel, Action action, bool disableAfterFirstUse = false)
-		{
-			var current = GetOrCreateChannel (channel);
-            var subscription = new Subscription<string> (owner, action);
+        private static ISubscription CreateSubscription(object owner, string channel, Action action, bool disableAfterFirstUse = false)
+        {
+            var current = GetOrCreateChannel(channel);
+            var subscription = new Subscription<string>(owner, action);
             subscription.RemoveAfterUse = disableAfterFirstUse;
-			current.Add (subscription);
-			return subscription;
-		}
+            current.Add(subscription);
+            return subscription;
+        }
 
         private static ISubscription CreateSubscription<T>(object owner, string channel, Action<T> action, bool disableAfterFirstUse = false)
+        {
+            var current = GetOrCreateChannel(channel);
+            var subscription = new Subscription<T>(owner, action);
+            subscription.RemoveAfterUse = disableAfterFirstUse;
+            current.Add(subscription);
+            return subscription;
+        }
+
+        private static ISubscription CreateSubscription<T>(object owner, string channel, Action<T, TinyEventArgs> action, bool disableAfterFirstUse = false)
         {
             var current = GetOrCreateChannel(channel);
             var subscription = new Subscription<T>(owner, action);
@@ -73,10 +82,10 @@ namespace TinyPubSubLib
         /// <param name="action">The action to run</param>
         /// <returns>A tag that can be used to unsubscribe</returns>
         public static string Subscribe(string channel, Action action)
-		{
-			var subscription = CreateSubscription (null, channel, action);
-			return subscription.Tag;
-		}
+        {
+            var subscription = CreateSubscription(null, channel, action);
+            return subscription.Tag;
+        }
 
         /// <summary>
         /// Subscribe to a channel that sends an argument
@@ -90,20 +99,20 @@ namespace TinyPubSubLib
             return subscription.Tag;
         }
 
-		/// <summary>
-		/// Subscribe to a channel
-		/// </summary>
-		/// <param name="owner">The owner of the subscription</param> 
-		/// <param name="channel">The channel name</param>
-		/// <param name="action">The action to run</param>
-		/// <returns>A tag that can be used to unsubscribe</returns>
-		/// <remarks>The owner can be used to make a mass-unsubscription by 
-		/// calling Unsubcribe and pass the same object.</remarks>
-		public static string Subscribe(object owner, string channel, Action action)
-		{
-			var subscription = CreateSubscription (owner, channel, action);
-			return subscription.Tag;
-		}
+        /// <summary>
+        /// Subscribe to a channel
+        /// </summary>
+        /// <param name="owner">The owner of the subscription</param> 
+        /// <param name="channel">The channel name</param>
+        /// <param name="action">The action to run</param>
+        /// <returns>A tag that can be used to unsubscribe</returns>
+        /// <remarks>The owner can be used to make a mass-unsubscription by 
+        /// calling Unsubcribe and pass the same object.</remarks>
+        public static string Subscribe(object owner, string channel, Action action)
+        {
+            var subscription = CreateSubscription(owner, channel, action);
+            return subscription.Tag;
+        }
 
         /// <summary>
         /// Subscribe to a channel that sends an argument
@@ -148,53 +157,105 @@ namespace TinyPubSubLib
         }
 
         /// <summary>
+        /// Subscribe to a channel that sends an argument with specified owner and TinyEventArgs to be able to cancle execution and specify if the event has been handled
+        /// </summary>
+        /// <returns>The subscribe.</returns>
+        /// <param name="owner">Owner.</param>
+        /// <param name="channel">Channel.</param>
+        /// <param name="action">Action with T and TinyEventArgs for execution handling and publishreturn.</param>
+        /// <typeparam name="T">The type to subscribe to.</typeparam>
+        public static string Subscribe<T>(string owner, string channel, Action<T, TinyEventArgs> action)
+        {
+            var subscription = CreateSubscription<T>(owner, channel, action);
+            return subscription.Tag;
+        }
+
+        /// <summary>
+        /// Subscribe to a channel that sends an argument with specified owner and TinyEventArgs to be able to cancle execution and specify if the event has been handled
+        /// </summary>
+        /// <returns>The subscribe.</returns>
+        /// <param name="channel">Channel.</param>
+        /// <param name="action">Action with T and TinyEventArgs for execution handling and publishreturn.</param>
+        /// <typeparam name="T">The type to subscribe to.</typeparam>
+        public static string Subscribe<T>(string channel, Action<T, TinyEventArgs> action)
+        {
+            var subscription = CreateSubscription<T>(null, channel, action);
+            return subscription.Tag;
+        }
+
+        /// <summary>
         /// Unsubscribes to a channel based on a tag
         /// </summary>
         /// <param name="tag"></param>
         public static void Unsubscribe(string tag)
-		{
-			foreach (var channel in _channels)
+        {
+            foreach (var channel in _channels)
             {
-				foreach (var subscription in channel.Value.ToList())
+                foreach (var subscription in channel.Value.ToList())
                 {
-					if (subscription.Tag == tag)
+                    if (subscription.Tag == tag)
                     {
-						channel.Value.Remove (subscription);
-					}
-				}
-			}
-		}
+                        channel.Value.Remove(subscription);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Unsubscribes to a channel based on an object owner
         /// </summary>
         /// <param name="owner"></param>
 		public static void Unsubscribe(object owner)
-		{
-			if (owner == null)
-			{
-				return;
-			}
-
-			foreach (var channel in _channels)
+        {
+            if (owner == null)
             {
-				foreach (var subscription in channel.Value.ToList())
+                return;
+            }
+
+            foreach (var channel in _channels)
+            {
+                foreach (var subscription in channel.Value.ToList())
                 {
-					if (subscription.Owner == owner)
+                    if (subscription.Owner == owner)
                     {
-						channel.Value.Remove (subscription);
-					}
-				}
-			}
-		}
-          
+                        channel.Value.Remove(subscription);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Publish an event the specified channel with instance argument.
         /// </summary>
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void Publish<T>(string channel, T instance) {
+        public static void Publish<T>(string channel, T instance)
+        {
+            PublishControlled<T>(channel, instance);
+        }
+
+        /// <summary>
+        /// Publish an event the specified channel with instance argument and returns if the event is handled.
+        /// </summary>
+        /// <returns>The controlled.</returns>
+        /// <param name="channel">The channel name</param>
+        /// <param name="instance">Instance to pass to the receiver.</param>
+        public static TinyEventArgs PublishControlled(string channel, string instance)
+        {
+            return PublishControlled<string>(channel, instance);
+        }
+
+        /// <summary>
+        /// Publish an event the specified channel with instance argument and returns if the event is handled.
+        /// </summary>
+        /// <returns>The controlled.</returns>
+        /// <param name="channel">The channel name</param>
+        /// <param name="instance">Instance to pass to the receiver.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public static TinyEventArgs PublishControlled<T>(string channel, T instance)
+        {
+            var returnEventArgs = new TinyEventArgs();
             if (string.IsNullOrWhiteSpace(channel))
             {
                 throw new ArgumentException("You have to specify a channel to publish to");
@@ -205,9 +266,28 @@ namespace TinyPubSubLib
                 foreach (var subscription in current.OfType<Subscription<T>>().ToList())
                 {
                     try
-                    {                        
-                        subscription.Action?.Invoke();
-                        subscription.ActionWithArgument?.Invoke(instance);
+                    {
+                        if (subscription.ActionWithArgumentAndArgs != null)
+                        {
+                            subscription.ActionWithArgumentAndArgs.Invoke(instance, returnEventArgs);
+                        }
+                        else
+                        {
+                            var hasBeenHandled = false;
+
+                            if (subscription.Action != null)
+                            {
+                                subscription.Action.Invoke();
+                                hasBeenHandled = true;
+                            }
+                            else if (subscription.ActionWithArgument != null)
+                            {
+                                subscription.ActionWithArgument.Invoke(instance);
+                                hasBeenHandled = true;
+                            }
+
+                            returnEventArgs.Handled = hasBeenHandled;
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -217,8 +297,13 @@ namespace TinyPubSubLib
                         current.Remove(subscription);
 
                     }
+                    if (subscription.RemoveAfterUse)
+                        Unsubscribe(subscription.Tag);
+                    if (returnEventArgs.HaltExecution)
+                        return returnEventArgs;
                 }
             }
+            return returnEventArgs;
         }
 
         private static void SendException(Exception ex, string tag)
@@ -229,7 +314,7 @@ namespace TinyPubSubLib
                 InnerException = ex,
                 SubscriptionTag = tag
             };
-            Publish<TinyException>(TinyException.DefaultChannel,message);
+            Publish<TinyException>(TinyException.DefaultChannel, message);
         }
 
         /// <summary>
@@ -237,9 +322,9 @@ namespace TinyPubSubLib
         /// </summary>
         /// <param name="channel">The channel name</param>
         public static void Publish(string channel, string argument = default(string))
-		{
-            Publish<string>(channel,argument);
-		}
+        {
+            Publish<string>(channel, argument);
+        }
 
         /// <summary>
         /// Publish using Task.Run
@@ -273,6 +358,6 @@ namespace TinyPubSubLib
             _channels.Clear();
         }
 
-       
+
     }
 }
