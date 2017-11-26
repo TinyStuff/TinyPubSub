@@ -150,7 +150,7 @@ namespace TinyPubSubLib
         /// <param name="channel">The channel name</param>
         /// <param name="action">The action to run</param>
         /// <typeparam name="T">The type to subscribe to.</typeparam>
-        public static string Subscribe<T>(string owner, string channel, Action<T> action)
+        public static string Subscribe<T>(object owner, string channel, Action<T> action)
         {
             var subscription = CreateSubscription<T>(owner, channel, action);
             return subscription.Tag;
@@ -164,7 +164,7 @@ namespace TinyPubSubLib
         /// <param name="channel">Channel.</param>
         /// <param name="action">Action with T and TinyEventArgs for execution handling and publishreturn.</param>
         /// <typeparam name="T">The type to subscribe to.</typeparam>
-        public static string Subscribe<T>(string owner, string channel, Action<T, TinyEventArgs> action)
+        public static string Subscribe<T>(object owner, string channel, Action<T, TinyEventArgs> action)
         {
             var subscription = CreateSubscription<T>(owner, channel, action);
             return subscription.Tag;
