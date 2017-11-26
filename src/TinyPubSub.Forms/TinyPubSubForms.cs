@@ -83,15 +83,15 @@ namespace TinyPubSubLib
         static void BindEvents(NavigationPage page)
         {
             page.Popped += (s, args) => TinyPubSub.Unsubscribe(args.Page.BindingContext);
-			page.PoppedToRoot += (s, args) =>
-			{
-				var poppedToRootEventArgs = args as PoppedToRootEventArgs;
-				foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
-				{
-					TinyPubSub.Unsubscribe(poppedPage);
-					TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
-				}
-			};
+              page.PoppedToRoot += (s, args) =>
+              {
+                var poppedToRootEventArgs = args as PoppedToRootEventArgs;
+                foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
+                {
+                  TinyPubSub.Unsubscribe(poppedPage);
+                  TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
+                }
+              };
         }
     }
 }
