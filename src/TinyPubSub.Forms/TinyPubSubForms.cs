@@ -57,7 +57,7 @@ namespace TinyPubSubLib
             }
         }
 
-        public static void SubscribeOnMainThread<T>(string owner, string channel, Action<T> action) 
+        public static void SubscribeOnMainThread<T>(object owner, string channel, Action<T> action) 
         {
             TinyPubSub.Subscribe<T>(owner,channel, (obj) => {
                 Device.BeginInvokeOnMainThread(() => action(obj));   
@@ -69,7 +69,7 @@ namespace TinyPubSubLib
             SubscribeOnMainThread(null, channel, action);
         }
 
-        public static void SubscribeOnMainThread(string owner, string channel, Action<string> action)
+        public static void SubscribeOnMainThread(object owner, string channel, Action<string> action)
         {
             SubscribeOnMainThread<string>(owner, channel, action);
         }
@@ -83,15 +83,15 @@ namespace TinyPubSubLib
         static void BindEvents(NavigationPage page)
         {
             page.Popped += (s, args) => TinyPubSub.Unsubscribe(args.Page.BindingContext);
-			page.PoppedToRoot += (s, args) =>
-			{
-				var poppedToRootEventArgs = args as PoppedToRootEventArgs;
-				foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
-				{
-					TinyPubSub.Unsubscribe(poppedPage);
-					TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
-				}
-			};
+              page.PoppedToRoot += (s, args) =>
+              {
+                var poppedToRootEventArgs = args as PoppedToRootEventArgs;
+                foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
+                {
+                  TinyPubSub.Unsubscribe(poppedPage);
+                  TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
+                }
+              };
         }
     }
 }
