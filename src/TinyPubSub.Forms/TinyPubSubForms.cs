@@ -31,17 +31,7 @@ namespace TinyPubSubLib
     {
         public static void Init(Application app)
         {
-            app.ChildAdded += App_ChildAdded;
             app.PropertyChanged += App_PropertyChanged;
-        }
-
-        static void App_ChildAdded(object sender, ElementEventArgs e)
-        {
-            if (e.Element is NavigationPage)
-            {
-                var page = e.Element as NavigationPage;
-                BindEvents(page);
-            }
         }
 
         static void App_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -82,16 +72,30 @@ namespace TinyPubSubLib
 
         static void BindEvents(NavigationPage page)
         {
-            page.Popped += (s, args) => TinyPubSub.Unsubscribe(args.Page.BindingContext);
-              page.PoppedToRoot += (s, args) =>
-              {
+            page.Popped += (s, args) =>
+            {
+                TinyPubSub.Unsubscribe(args.Page);
+                TinyPubSub.Unsubscribe(args.Page.BindingContext);
+
+                if (args.Page is MultiPage<Page> multipage)
+                {
+                    foreach (var child in multipage.Children)
+                    {
+                        TinyPubSub.Unsubscribe(child);
+                        TinyPubSub.Unsubscribe(child.BindingContext);
+                    }
+                }
+            };
+
+            page.PoppedToRoot += (s, args) =>
+            {
                 var poppedToRootEventArgs = args as PoppedToRootEventArgs;
                 foreach (var poppedPage in poppedToRootEventArgs.PoppedPages)
                 {
-                  TinyPubSub.Unsubscribe(poppedPage);
-                  TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
+                    TinyPubSub.Unsubscribe(poppedPage);
+                    TinyPubSub.Unsubscribe(poppedPage?.BindingContext);
                 }
-              };
+            };
         }
     }
 }
