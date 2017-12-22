@@ -102,6 +102,24 @@ Release (1.2.x for TinyPubSub and 1.2.x for TinyPubSub.Forms)
 
 Package 1.0.x and 1.1.x are built for profile 259. Packaged 1.2.x are built using netstandard 1.0.
 
+## EXCEPTION HANDLING
+
+Exceptions are sent back to you through TinyPubSub itself.
+
+```csharp
+TinyPubSub.Subscribe(this, TinyExceptionDefaultChannel, (TinyException ex) => { HandleException(ex) });
+```
+
+You can also send an error handler directly into the publish call.
+
+```csharp
+TinyPubSub.Publish(this, "new-duck-added", () => HandleDuck(), onError: (ex, s) => 
+    {
+        // ex is the Exception that was thrown
+        // s is the subscription that failed
+    });
+```
+
 ### Forms
 If you are using TinyPubSub from Xamarin forms, install this package and call the init method as described at the top. You don't have to install any other package.
 

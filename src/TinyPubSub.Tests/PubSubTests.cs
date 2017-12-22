@@ -224,5 +224,19 @@ namespace TinyPubSub.Tests
             // Assert
             Assert.True(testsuccessful);
         }
+
+        [Fact]
+        public async Task PublishWithOnErrorActionTest()
+        {
+            // Arrange
+            var testsuccessful = true;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", () => throw new Exception("Boom"));
+
+            // Act
+            await TinyPubSubLib.TinyPubSub.PublishAsync("test", OnError: (ex, s) => testsuccessful = ex.Message == "Boom");
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
     }
 }

@@ -230,9 +230,9 @@ namespace TinyPubSubLib
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void Publish<T>(string channel, T instance)
+        public static void Publish<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
         {
-            PublishControlled<T>(channel, instance);
+            PublishControlled<T>(channel, instance, OnError);
         }
 
         /// <summary>
@@ -241,9 +241,9 @@ namespace TinyPubSubLib
         /// <returns>The controlled.</returns>
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
-        public static TinyEventArgs PublishControlled(string channel, string instance)
+        public static TinyEventArgs PublishControlled(string channel, string instance, Action<Exception, ISubscription> OnError = null)
         {
-            return PublishControlled<string>(channel, instance);
+            return PublishControlled<string>(channel, instance, OnError);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace TinyPubSubLib
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static TinyEventArgs PublishControlled<T>(string channel, T instance)
+        public static TinyEventArgs PublishControlled<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
         {
             var returnEventArgs = new TinyEventArgs();
             if (string.IsNullOrWhiteSpace(channel))
@@ -291,7 +291,8 @@ namespace TinyPubSubLib
                     }
                     catch (Exception ex)
                     {
-                        SendException(ex, subscription.Tag);
+                        OnError?.Invoke(ex, subscription);
+					    SendException(ex, subscription.Tag);
                     }
 
                     if (subscription.RemoveAfterUse)
@@ -323,9 +324,9 @@ namespace TinyPubSubLib
         /// Publish an event the specified channel.
         /// </summary>
         /// <param name="channel">The channel name</param>
-        public static void Publish(string channel, string argument = default(string))
+        public static void Publish(string channel, string argument = default(string), Action<Exception, ISubscription> OnError = null)
         {
-            Publish<string>(channel, argument);
+            Publish<string>(channel, argument, OnError);
         }
 
         /// <summary>
@@ -335,10 +336,10 @@ namespace TinyPubSubLib
         /// <param name="argument">An optional parameter</param>
         /// <remarks>This method is not blocking, it simply uses a Task.Run(() => Publish(...)) internally
         /// to hand of the call to be handled by someone else.</remarks>
-        public static void PublishAsTask(string channel, string argument = default(string))
+        public static void PublishAsTask(string channel, string argument = default(string), Action<Exception, ISubscription> OnError = null)
         {
             // Add to delayed handle queue
-            Task.Run(() => Publish(channel, argument)).ConfigureAwait(false);
+            Task.Run(() => Publish(channel, argument, OnError)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -347,9 +348,9 @@ namespace TinyPubSubLib
         /// <param name="channel">The channel to publish to</param>
         /// <param name="argument">An optional parameter</param>
         /// <returns>A task</returns>
-        public static async Task PublishAsync(string channel, string argument = default(string))
+        public static async Task PublishAsync(string channel, string argument = default(string), Action<Exception, ISubscription> OnError = null)
         {
-            await Task.Run(() => Publish(channel, argument));
+            await Task.Run(() => Publish(channel, argument, OnError));
         }
 
         /// <summary>

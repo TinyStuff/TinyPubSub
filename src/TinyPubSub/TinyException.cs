@@ -26,19 +26,23 @@ using System;
 
 namespace TinyPubSubLib
 {
-    public interface ISubscription
+    public class TinyException
     {
-        Action Action { get; set; }
 
-        Action<object> ActionWithArgument { get; }
+        public static readonly string DefaultChannel = "TinyException";
 
-        string Tag { get; set; }
+        public string Message
+        {
+            get;
+            set;
+        }
 
-        Type SubscribeToType { get; set; }
+        public Exception InnerException
+        {
+            get;
+            set;
+        }
 
-        bool RemoveAfterUse { get; set; }
-
-        object Owner { get; set; }
+        public string SubscriptionTag { get; set; }
     }
-
 }
