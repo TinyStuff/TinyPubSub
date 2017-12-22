@@ -57,7 +57,6 @@ namespace TinyPubSub.Tests
             var testsuccessful = 0;
             var tstType = new TestEventType();
 
-
             TinyPubSubLib.TinyPubSub.Subscribe<TestEventType>(null, "test", (TestEventType x) =>
             {
                 testsuccessful = 3;
