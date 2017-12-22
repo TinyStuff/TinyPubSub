@@ -58,19 +58,13 @@ namespace TinyPubSub.Tests
             var tstType = new TestEventType();
 
 
-
             TinyPubSubLib.TinyPubSub.Subscribe<TestEventType>(null, "test", (TestEventType x) =>
             {
                 testsuccessful = 3;
-
             });
-
-            var v = new EventArgs();
 
             TinyPubSubLib.TinyPubSub.Subscribe<TestEventType>(null, "test", (TestEventType x, TinyPubSubLib.TinyEventArgs evtargs) =>
             {
-                //testsuccessful = 1;
-                evtargs.Handled = false;
                 evtargs.HaltExecution = true;
             });
 
@@ -83,7 +77,7 @@ namespace TinyPubSub.Tests
             var ret = TinyPubSubLib.TinyPubSub.PublishControlled("test", tstType);
 
             // Assert
-            Assert.True(testsuccessful==3 && ret.Handled == true);
+            Assert.True(testsuccessful == 3 && ret.Handled == true);
         }
 
         [Fact]
@@ -216,5 +210,19 @@ namespace TinyPubSub.Tests
 			// Assert
 			Assert.True(testsuccessful);
 		}
+
+        [Fact]
+        public async Task PublishAsyncWithExceptionTest()
+        {
+            // Arrange
+            var testsuccessful = true;
+            TinyPubSubLib.TinyPubSub.Subscribe("test", () => throw new Exception());
+
+            // Act
+            await TinyPubSubLib.TinyPubSub.PublishAsync("test");
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
     }
 }

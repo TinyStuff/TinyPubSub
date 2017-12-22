@@ -2,10 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Views.MainView">
 	<ContentPage.Content>
 		<StackLayout>
-      <Label Text="{Binding DuckCount}" />
-      <Button Text="Fire!" Command="{Binding Fire}" />
-      <Button Text="Fire bool!" Command="{Binding Fire2}" />
-      <Button Text="Count ducks" Command="{Binding Fire3}" />
+            <Label Text="{Binding DuckCount}" />
+            <Label Text="{Binding TheBool}" />
+            <Button Text="Fire!" Command="{Binding Fire}" />
+            <Button Text="Fire bool!" Command="{Binding Fire2}" />
+            <Button Text="Count ducks" Command="{Binding Fire3}" />
 			<Button Text="View ducks" Command="{Binding NavigateToDuck}" />
 		</StackLayout>
 	</ContentPage.Content>

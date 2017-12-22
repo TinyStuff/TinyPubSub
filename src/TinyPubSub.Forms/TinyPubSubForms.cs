@@ -31,6 +31,7 @@ namespace TinyPubSubLib
     {
         public static void Init(Application app)
         {
+            TinyPubSub.Clear();
             app.ChildAdded += App_ChildAdded;
             app.PropertyChanged += App_PropertyChanged;
         }

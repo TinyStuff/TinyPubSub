@@ -291,16 +291,18 @@ namespace TinyPubSubLib
                     }
                     catch (Exception ex)
                     {
-                        // Notify error
                         SendException(ex, subscription.Tag);
-                        // We should not have exceptions leaking all the way up here.
-                        current.Remove(subscription);
-
                     }
+
                     if (subscription.RemoveAfterUse)
-                        Unsubscribe(subscription.Tag);
+                    {
+						Unsubscribe(subscription.Tag);
+                    }
+
                     if (returnEventArgs.HaltExecution)
-                        return returnEventArgs;
+                    {
+						return returnEventArgs;
+                    }
                 }
             }
             return returnEventArgs;
@@ -357,7 +359,5 @@ namespace TinyPubSubLib
         {
             _channels.Clear();
         }
-
-
     }
 }

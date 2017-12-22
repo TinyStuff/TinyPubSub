@@ -32,15 +32,30 @@ namespace ViewModels
 				{ 
  					// Do something here, but nuget was down at the time of writing this code
 				});	
-        TinyPubSub.Subscribe<bool>("firebool",(obj) => {
-            _toggleBool = obj;
 
-        });
-        TinyPubSubLib.TinyPubSubForms.SubscribeOnMainThread("onmain", (obj) => {
-            DuckCount++;
-            PropertyChanged(this, new PropertyChangedEventArgs("DuckCount"));
-        });
+            TinyPubSub.Subscribe<bool>("firebool",(obj) => {
+                _toggleBool = obj;
+                TheBool = _toggleBool;
+            });
+
+            TinyPubSubLib.TinyPubSubForms.SubscribeOnMainThread("onmain", (obj) => {
+                DuckCount++;
+                PropertyChanged(this, new PropertyChangedEventArgs("DuckCount"));
+            });
 		}
+
+        public bool TheBool 
+        {
+            get 
+            {
+                return _toggleBool;
+            }
+            set 
+            {
+                _toggleBool = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("TheBool"));
+            }
+        }
 
         private bool _toggleBool = false;
 
