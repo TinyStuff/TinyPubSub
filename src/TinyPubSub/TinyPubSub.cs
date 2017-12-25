@@ -26,6 +26,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace TinyPubSubLib
 {
@@ -359,6 +360,27 @@ namespace TinyPubSubLib
         public static void Clear()
         {
             _channels.Clear();
+        }
+
+        /// <summary>
+        /// Scans an object after attributes to hook up to TinyPubSub
+        /// </summary>
+        /// <param name="obj">The object to scan</param>
+        public static void Register(object obj)
+        {
+            var typeInfo = IntrospectionExtensions.GetTypeInfo(obj.GetType());;
+
+            foreach (var method in typeInfo.DeclaredMethods)
+            {
+                var attributes = method.GetCustomAttributes(typeof(TinySubscribeAttribute));
+
+                foreach (TinySubscribeAttribute attribute in attributes)
+                {
+                    var channel = attribute.Channel;
+
+                    TinyPubSub.Subscribe(channel, () => method.Invoke(obj, null));
+                }
+            }
         }
     }
 }

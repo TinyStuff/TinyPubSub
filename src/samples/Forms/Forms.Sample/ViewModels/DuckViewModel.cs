@@ -1,16 +1,14 @@
-﻿using System;
-
+﻿
 using Xamarin.Forms;
 using TinyPubSubLib;
-
 using System.Windows.Input;
 using Views;
 using System.ComponentModel;
 
 namespace ViewModels
 {
-   
-	public class DuckViewModel : ViewModelBase, INotifyPropertyChanged
+
+    public class DuckViewModel : ViewModelBase, INotifyPropertyChanged
 	{
         int duckCount = 1;
 
@@ -31,7 +29,7 @@ namespace ViewModels
 
         public DuckViewModel ()
 		{
-			TinyPubSub.Subscribe (this, "fire", () => 
+            TinyPubSub.Subscribe (this, "fire", () => 
 			{ 
 				// This line should not be fired when the page is navigated away from
 				int i = 10;
