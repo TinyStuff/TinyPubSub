@@ -257,13 +257,16 @@ namespace TinyPubSubLib
         public static TinyEventArgs PublishControlled<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
         {
             var returnEventArgs = new TinyEventArgs();
+
             if (string.IsNullOrWhiteSpace(channel))
             {
                 throw new ArgumentException("You have to specify a channel to publish to");
             }
+
             if (_channels.ContainsKey(channel))
             {
                 var current = _channels[channel];
+
                 foreach (var subscription in current.OfType<Subscription<T>>().ToList())
                 {
                     try
@@ -305,6 +308,12 @@ namespace TinyPubSubLib
                     {
 						return returnEventArgs;
                     }
+                }
+
+                // Concept code - fall back to calling each with object
+                if (typeof(T) != typeof(object))
+                {
+					PublishControlled<object>(channel, instance, OnError);
                 }
             }
             return returnEventArgs;
@@ -378,7 +387,18 @@ namespace TinyPubSubLib
                 {
                     var channel = attribute.Channel;
 
-                    TinyPubSub.Subscribe(channel, () => method.Invoke(obj, null));
+                    if (method.GetParameters().Any())
+                    {
+                        // Concept code - only supporting one argument at the moment
+                        var param1 = method.GetParameters().First();
+                        var paramType = param1.ParameterType;
+                        TinyPubSub.Subscribe<object>(channel, (t) => method.Invoke(obj, new object[] {t}));
+                    }
+                    else
+                    {
+                        // Register without parameters since the target method has none
+						TinyPubSub.Subscribe(channel, () => method.Invoke(obj, null));
+                    }
                 }
             }
         }

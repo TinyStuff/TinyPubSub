@@ -1,6 +1,6 @@
 # TinyPubSub
 <del>Worlds smallest</del> A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
-In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, async publish.
+In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, async publish, non-generic and generic publish/subscribe.
 
 ## Build status
 
@@ -51,8 +51,11 @@ TinyPubSub.Subscribe(this, "new-duck-added", (x) => RebindDuckGui(nameofduck: x)
 
 // Non-forms way
 TinyPubSub.Subscribe("new-duck-added", (x) => RebindDuckGui(nameofduck: x));
-```
 
+// The forms way with a typed argument, where MessageModel can be any class you'd like
+TinyPubSub.Subscribe<MessageModel>(this, "new-duck-added", (model) => RebindDuckGui(nameofduck: model.Name));
+
+```
 
 Publish
 
@@ -74,6 +77,9 @@ await TinyPubSub.PublishAsync("new-duck-added");
 
 // Async with argument
 await TinyPubSub.PublishAsync("new-duck-added", "Ducky McDuckface");
+
+// Publish with a typed argument
+TinyPubSub.Publish("new-duck-added", new MessageModel() { Name = "Ducky" });
 
 ```
 
