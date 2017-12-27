@@ -311,6 +311,8 @@ namespace TinyPubSubLib
                 }
 
                 // Concept code - fall back to calling each with object
+                // this is the way we need to do it for allowing attribute
+                // subscription.
                 if (typeof(T) != typeof(object))
                 {
 					PublishControlled<object>(channel, instance, OnError);
@@ -389,10 +391,10 @@ namespace TinyPubSubLib
 
                     if (method.GetParameters().Any())
                     {
-                        // Concept code - only supporting one argument at the moment
-                        var param1 = method.GetParameters().First();
-                        var paramType = param1.ParameterType;
-                        TinyPubSub.Subscribe<object>(channel, (t) => method.Invoke(obj, new object[] {t}));
+                        // Concept code for subscriptions
+                        var firstParam = method.GetParameters().First();
+                        var paramType = firstParam.ParameterType;
+                        TinyPubSub.Subscribe<object>(channel, (data) => method.Invoke(obj, new object[] { data }));
                     }
                     else
                     {

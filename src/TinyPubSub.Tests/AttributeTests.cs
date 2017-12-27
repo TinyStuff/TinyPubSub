@@ -50,6 +50,10 @@ namespace TinyPubSub.Tests
             Assert.True(subject.IsSuccessful);
         }
 
+        /// <summary>
+        /// Register subcriptions through attribute but the publish calls data doesn't match the 
+        /// signature of the subscription method. At the moment, this results in an error.
+        /// </summary>
         [Fact]
         public void SubscribeWithWrongParameterTest()
         {
@@ -87,6 +91,11 @@ namespace TinyPubSub.Tests
             IsSuccessful = true;
         }
 
+        /// <summary>
+        /// This method will only be called if the Publish passes
+        /// TestType as argument.
+        /// </summary>
+        /// <param name="data">Data.</param>
         [TinySubscribe("test-with-arguments")]
         public void DoEpicStuffWithArgument(TestType data)
         {
@@ -105,6 +114,5 @@ namespace TinyPubSub.Tests
 
     public class BadTestType
     {
-
     }
 }
