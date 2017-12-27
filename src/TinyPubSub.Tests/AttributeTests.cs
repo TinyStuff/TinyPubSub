@@ -16,13 +16,14 @@ namespace TinyPubSub.Tests
 
             // Act
             TinyPubSubLib.TinyPubSub.Publish("test");
+            TinyPubSubLib.TinyPubSub.Deregister(subject);
 
             // Assert
             Assert.True(subject.IsSuccessful);
         }
 
         [Fact]
-        public void SubscribeAsyncWithAttributeTest()
+        public async Task SubscribeAsyncWithAttributeTest()
         {
             // Arrange
             var subject = new TestSubject();
@@ -30,6 +31,8 @@ namespace TinyPubSub.Tests
 
             // Act
             TinyPubSubLib.TinyPubSub.Publish("test-async");
+            TinyPubSubLib.TinyPubSub.Deregister(subject);
+            await Task.Delay(10);
 
             // Assert
             Assert.True(subject.IsSuccessful);
@@ -45,6 +48,7 @@ namespace TinyPubSub.Tests
             // Act
             var data = new TestType() { DuckLength = 42 };
             TinyPubSubLib.TinyPubSub.Publish("test-with-arguments", data);
+            TinyPubSubLib.TinyPubSub.Deregister(subject);
 
             // Assert
             Assert.True(subject.IsSuccessful);
@@ -64,6 +68,7 @@ namespace TinyPubSub.Tests
             // Act
             var data = new BadTestType();
             TinyPubSubLib.TinyPubSub.Publish("test-with-arguments", data, OnError: (Exception arg1, ISubscription arg2) => subject.IsSuccessful = true);
+            TinyPubSubLib.TinyPubSub.Deregister(subject);
 
             // Assert
             Assert.True(subject.IsSuccessful);

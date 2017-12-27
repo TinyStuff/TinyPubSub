@@ -55,7 +55,6 @@ namespace TinyPubSubLib
 
         public bool RemoveAfterUse { get; set; }
 
-
         internal Subscription () {
             Tag = Guid.NewGuid().ToString();
             SubscribeToType = typeof(T);

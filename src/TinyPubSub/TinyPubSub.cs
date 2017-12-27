@@ -394,15 +394,20 @@ namespace TinyPubSubLib
                         // Concept code for subscriptions
                         var firstParam = method.GetParameters().First();
                         var paramType = firstParam.ParameterType;
-                        TinyPubSub.Subscribe<object>(channel, (data) => method.Invoke(obj, new object[] { data }));
+                        TinyPubSub.Subscribe<object>(obj, channel, (data) => method.Invoke(obj, new object[] { data }));
                     }
                     else
                     {
                         // Register without parameters since the target method has none
-						TinyPubSub.Subscribe(channel, () => method.Invoke(obj, null));
+						TinyPubSub.Subscribe(obj, channel, () => method.Invoke(obj, null));
                     }
                 }
             }
+        }
+
+        public static void Deregister(object obj)
+        {
+            TinyPubSub.Unsubscribe(obj);
         }
     }
 }
