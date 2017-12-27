@@ -26,6 +26,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace TinyPubSubLib
 {
@@ -256,13 +257,16 @@ namespace TinyPubSubLib
         public static TinyEventArgs PublishControlled<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
         {
             var returnEventArgs = new TinyEventArgs();
+
             if (string.IsNullOrWhiteSpace(channel))
             {
                 throw new ArgumentException("You have to specify a channel to publish to");
             }
+
             if (_channels.ContainsKey(channel))
             {
                 var current = _channels[channel];
+
                 foreach (var subscription in current.OfType<Subscription<T>>().ToList())
                 {
                     try
@@ -304,6 +308,14 @@ namespace TinyPubSubLib
                     {
 						return returnEventArgs;
                     }
+                }
+
+                // Concept code - fall back to calling each with object
+                // this is the way we need to do it for allowing attribute
+                // subscription.
+                if (typeof(T) != typeof(object))
+                {
+					PublishControlled<object>(channel, instance, OnError);
                 }
             }
             return returnEventArgs;
@@ -359,6 +371,43 @@ namespace TinyPubSubLib
         public static void Clear()
         {
             _channels.Clear();
+        }
+
+        /// <summary>
+        /// Scans an object after attributes to hook up to TinyPubSub
+        /// </summary>
+        /// <param name="obj">The object to scan</param>
+        public static void Register(object obj)
+        {
+            var typeInfo = IntrospectionExtensions.GetTypeInfo(obj.GetType());
+
+            foreach (var method in typeInfo.DeclaredMethods)
+            {
+                var attributes = method.GetCustomAttributes(typeof(TinySubscribeAttribute)).OfType<TinySubscribeAttribute>();
+
+                foreach (var attribute in attributes)
+                {
+                    var channel = attribute.Channel;
+
+                    if (method.GetParameters().Any())
+                    {
+                        // Concept code for subscriptions
+                        var firstParam = method.GetParameters().First();
+                        var paramType = firstParam.ParameterType;
+                        TinyPubSub.Subscribe<object>(obj, channel, (data) => method.Invoke(obj, new object[] { data }));
+                    }
+                    else
+                    {
+                        // Register without parameters since the target method has none
+						TinyPubSub.Subscribe(obj, channel, () => method.Invoke(obj, null));
+                    }
+                }
+            }
+        }
+
+        public static void Deregister(object obj)
+        {
+            TinyPubSub.Unsubscribe(obj);
         }
     }
 }
