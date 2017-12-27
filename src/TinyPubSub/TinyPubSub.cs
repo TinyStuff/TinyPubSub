@@ -379,13 +379,13 @@ namespace TinyPubSubLib
         /// <param name="obj">The object to scan</param>
         public static void Register(object obj)
         {
-            var typeInfo = IntrospectionExtensions.GetTypeInfo(obj.GetType());;
+            var typeInfo = IntrospectionExtensions.GetTypeInfo(obj.GetType());
 
             foreach (var method in typeInfo.DeclaredMethods)
             {
-                var attributes = method.GetCustomAttributes(typeof(TinySubscribeAttribute));
+                var attributes = method.GetCustomAttributes(typeof(TinySubscribeAttribute)).OfType<TinySubscribeAttribute>();
 
-                foreach (TinySubscribeAttribute attribute in attributes)
+                foreach (var attribute in attributes)
                 {
                     var channel = attribute.Channel;
 
