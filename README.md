@@ -55,6 +55,22 @@ TinyPubSub.Subscribe("new-duck-added", (x) => RebindDuckGui(nameofduck: x));
 // The forms way with a typed argument, where MessageModel can be any class you'd like
 TinyPubSub.Subscribe<MessageModel>(this, "new-duck-added", (model) => RebindDuckGui(nameofduck: model.Name));
 
+// Subscription by attribute
+public class MyClass
+{
+    public MyClass()
+    {
+        // Register it directly in the class or somewhere else
+        TinyPubSub.Register(this);
+    }
+
+    [TinySubscribe("new-duck-added")]
+    public void DuckAdded(MessageModel duck)
+    {
+        // Do something with the duck
+    }
+}
+
 ```
 
 Publish
