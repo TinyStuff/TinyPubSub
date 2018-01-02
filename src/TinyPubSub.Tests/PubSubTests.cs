@@ -5,31 +5,33 @@ using Xunit;
 namespace TinyPubSub.Tests
 {
     // Dummy class for instance sending
-    public class TestEventType {
+    public class TestEventType
+    {
         public int Sklep { get; set; } = 5;
     }
 
     // Dummy class for instance sending with inheritance
-    public class InheritedTestEventType : TestEventType {
+    public class InheritedTestEventType : TestEventType
+    {
         public int MyOtherInt { get; set; } = 2;
     }
 
     public class PubSubTests
     {
-		[Fact]
-		public void SubscribeWithArgumentTest()
-		{
-			// Arrange
-			var testsuccessful = false;
+        [Fact]
+        public void SubscribeWithArgumentTest()
+        {
+            // Arrange
+            var testsuccessful = false;
             var channel = Guid.NewGuid().ToString();
             TinyPubSubLib.TinyPubSub.Subscribe(channel, (x) => testsuccessful = (x == "duck"));
 
-			// Act
+            // Act
             TinyPubSubLib.TinyPubSub.Publish(channel, "duck");
 
-			// Assert
+            // Assert
             Assert.True(testsuccessful);
-		}
+        }
 
         [Fact]
         public void SubscribeWithTypeTest()
@@ -94,59 +96,28 @@ namespace TinyPubSub.Tests
             Assert.True(testsuccessful);
         }
 
-		[Fact]
-		public void SubscribeWithArgumentMissingTest()
-		{
-			// Arrange
-			var testsuccessful = false;
-            var channel = Guid.NewGuid().ToString();
-            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
-
-			// Act
-			TinyPubSubLib.TinyPubSub.Publish(channel, "dumbargument");
-
-			// Assert
-			Assert.True(testsuccessful);
-		}
-
-		[Fact]
-		public void SubscribeWithArgumentMissingButArgumentedSubscriptionTest()
-		{
-			// Arrange
-			var testsuccessful = false;
-            var channel = Guid.NewGuid().ToString();
-			TinyPubSubLib.TinyPubSub.Subscribe(channel, (x) => testsuccessful = (x == null));
-
-			// Act
-			TinyPubSubLib.TinyPubSub.Publish(channel);
-
-			// Assert
-			Assert.True(testsuccessful);
-		}
-
-		[Fact]
-		public void SubscribePublishTheMostCommonWayTest()
-		{
-			// Arrange
-			var testsuccessful = false;
-            var channel = Guid.NewGuid().ToString();
-			TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
-
-			// Act
-			TinyPubSubLib.TinyPubSub.Publish(channel);
-
-			// Assert
-			Assert.True(testsuccessful);
-		}
-
         [Fact]
-        public void SubscribePublishExceptionHandling()
+        public void SubscribeWithArgumentMissingTest()
         {
             // Arrange
             var testsuccessful = false;
             var channel = Guid.NewGuid().ToString();
-            var subId = TinyPubSubLib.TinyPubSub.Subscribe(channel, () => throw new Exception("Error in handling") );
-            TinyPubSubLib.TinyPubSub.Subscribe<TinyPubSubLib.TinyException>(TinyPubSubLib.TinyException.DefaultChannel, (msg) => testsuccessful = msg.SubscriptionTag==subId);
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish(channel, "dumbargument");
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
+
+        [Fact]
+        public void SubscribeWithArgumentMissingButArgumentedSubscriptionTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            var channel = Guid.NewGuid().ToString();
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, (x) => testsuccessful = (x == null));
 
             // Act
             TinyPubSubLib.TinyPubSub.Publish(channel);
@@ -155,67 +126,98 @@ namespace TinyPubSub.Tests
             Assert.True(testsuccessful);
         }
 
-		[Fact]
-		public async Task DelayedSubscribePublishTest()
-		{
-			// Arrange
-			var testsuccessful = false;
+        [Fact]
+        public void SubscribePublishTheMostCommonWayTest()
+        {
+            // Arrange
+            var testsuccessful = false;
             var channel = Guid.NewGuid().ToString();
-			TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
 
-			// Act
-			TinyPubSubLib.TinyPubSub.PublishAsTask(channel);
-			await Task.Delay(100);
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish(channel);
 
-			// Assert
-			Assert.True(testsuccessful);
-		}
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
-		[Fact]
-		public void DelayedSubscribePublishNotWaitingForCompletionTest()
-		{
-			// Arrange
-			var testsuccessful = true;
+        [Fact]
+        public void SubscribePublishExceptionHandling()
+        {
+            // Arrange
+            var testsuccessful = false;
             var channel = Guid.NewGuid().ToString();
-			TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = false);
+            var subId = TinyPubSubLib.TinyPubSub.Subscribe(channel, () => throw new Exception("Error in handling"));
+            TinyPubSubLib.TinyPubSub.Subscribe<TinyPubSubLib.TinyException>(TinyPubSubLib.TinyException.DefaultChannel, (msg) => testsuccessful = msg.SubscriptionTag == subId);
 
-			// Act
-			TinyPubSubLib.TinyPubSub.PublishAsTask(channel);
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish(channel);
 
-			// Assert
-			Assert.True(testsuccessful);
-		}
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
-		[Fact]
-		public async Task DelayedSubscribePublishWithArgumentsTest()
-		{
-			// Arrange
-			var testsuccessful = false;
+        [Fact]
+        public async Task DelayedSubscribePublishTest()
+        {
+            // Arrange
+            var testsuccessful = false;
             var channel = Guid.NewGuid().ToString();
-			TinyPubSubLib.TinyPubSub.Subscribe(channel, (x) => testsuccessful = x == "duck");
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
 
-			// Act
-			TinyPubSubLib.TinyPubSub.PublishAsTask(channel, "duck");
-			await Task.Delay(100);
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishAsTask(channel);
+            await Task.Delay(100);
 
-			// Assert
-			Assert.True(testsuccessful);
-		}
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
-		[Fact]
-		public async Task PublishAsyncTest()
-		{
-			// Arrange
-			var testsuccessful = false;
+        [Fact]
+        public void DelayedSubscribePublishNotWaitingForCompletionTest()
+        {
+            // Arrange
+            var testsuccessful = true;
             var channel = Guid.NewGuid().ToString();
-			TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = false);
 
-			// Act
-			await TinyPubSubLib.TinyPubSub.PublishAsync(channel);
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishAsTask(channel);
 
-			// Assert
-			Assert.True(testsuccessful);
-		}
+            // Assert
+            Assert.True(testsuccessful);
+        }
+
+        [Fact]
+        public async Task DelayedSubscribePublishWithArgumentsTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            var channel = Guid.NewGuid().ToString();
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, (x) => testsuccessful = x == "duck");
+
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishAsTask(channel, "duck");
+            await Task.Delay(100);
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
+
+        [Fact]
+        public async Task PublishAsyncTest()
+        {
+            // Arrange
+            var testsuccessful = false;
+            var channel = Guid.NewGuid().ToString();
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = true);
+
+            // Act
+            await TinyPubSubLib.TinyPubSub.PublishAsync(channel);
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
 
         [Fact]
         public async Task PublishAsyncWithExceptionTest()
