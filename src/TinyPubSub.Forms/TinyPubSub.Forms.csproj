@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
@@ -21,7 +21,7 @@
     <Folder Include="Extensions\" />
   </ItemGroup>
   <PropertyGroup>
-    <PackageId>tinypubsub.forms</PackageId>
+    <PackageId>TinyPubSub.Forms</PackageId>
     <PackageVersion>1.2.0</PackageVersion>
     <Authors>johankson and dhindrik</Authors>
     <Description>Forms initialization helper for TinyPubSub</Description>

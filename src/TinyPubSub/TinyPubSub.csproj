@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.0</TargetFramework>
@@ -8,12 +8,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CI|AnyCPU'" />
 
   <PropertyGroup>
-    <PackageId>tinypubsub</PackageId>
+    <PackageId>TinyPubSub</PackageId>
     <PackageVersion>1.2.0</PackageVersion>
     <Authors>johankson and dhindrik</Authors>
     <Description>A very simple pub/sub implementation for .net/xamarin.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Updated package to netstandard 1.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Formatted package name</PackageReleaseNotes>
     <Copyright>Copyright 2017 - Johan Karlsson and Daniel Hindrikes</Copyright>
     <PackageTags>Xamarin pubsub</PackageTags>
     <PackageIconUrl>http://i.imgur.com/p0xJYYC.png</PackageIconUrl>
