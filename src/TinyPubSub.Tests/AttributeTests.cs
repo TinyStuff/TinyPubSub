@@ -45,7 +45,7 @@ namespace TinyPubSub.Tests
 
             // Act
             var data = new TestType() { DuckLength = 42 };
-            TinyPubSubLib.TinyPubSub.Publish("test-with-arguments", data, OnError: (Exception arg1, ISubscription arg2) => Console.WriteLine($"Exception occured: {arg1.ToString()}"));
+            TinyPubSubLib.TinyPubSub.Publish("test-with-arguments", data, onError: (Exception arg1, ISubscription arg2) => Console.WriteLine($"Exception occured: {arg1.ToString()}"));
 
             // Assert
             Assert.True(subject.IsSuccessful);
@@ -64,7 +64,7 @@ namespace TinyPubSub.Tests
 
             // Act
             var data = new BadTestType();
-            TinyPubSubLib.TinyPubSub.Publish("test-with-bad-arguments", data, OnError: (Exception arg1, ISubscription arg2) => subject.IsSuccessful = true);
+            TinyPubSubLib.TinyPubSub.Publish("test-with-bad-arguments", data, onError: (Exception arg1, ISubscription arg2) => subject.IsSuccessful = true);
 
             // Assert
             Assert.True(subject.IsSuccessful);
