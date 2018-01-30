@@ -30,6 +30,8 @@ namespace TinyPubSubLib
     using System.Reflection;
     using System.Threading.Tasks;
 
+    using TinyPubSubLib.Subscriptions;
+
     public static class TinyPubSub
     {
         //// EB: replaced Dictionary<,> with ConcurrentDictionary<,> for thread safety. The use of a dictionary inside the dictionary is due to the fact that there is no standard concurrent hashset nor concurrent list in ".NET *".
@@ -76,6 +78,24 @@ namespace TinyPubSubLib
         public static string Subscribe(string channel, Action action)
         {
             var subscription = CreateSubscription(null, channel, action);
+            return subscription.Tag;
+        }
+
+        public static string SubscribeTo<T>(string channel, Action<SubscriptionConfigurator<T>> config)
+        {
+            var current = GetOrCreateChannel(channel);
+            var subscription = new Subscription<T>();
+            config(new SubscriptionConfigurator<T>(subscription));
+            current.TryAdd(subscription, subscription);
+            return subscription.Tag;
+        }
+
+        public static string SubscribeTo(string channel, Action<SubscriptionConfigurator<string>> config)
+        {
+            var current = GetOrCreateChannel(channel);
+            var subscription = new Subscription<string>();
+            config(new SubscriptionConfigurator<string>(subscription));
+            current.TryAdd(subscription, subscription);
             return subscription.Tag;
         }
 
@@ -261,27 +281,7 @@ namespace TinyPubSubLib
                 {
                     try
                     {
-                        if (subscription.ActionWithArgumentAndArgs != null)
-                        {
-                            subscription.ActionWithArgumentAndArgs.Invoke(instance, returnEventArgs);
-                        }
-                        else
-                        {
-                            var hasBeenHandled = false;
-
-                            if (subscription.Action != null)
-                            {
-                                subscription.Action.Invoke();
-                                hasBeenHandled = true;
-                            }
-                            else if (subscription.ActionWithArgument != null)
-                            {
-                                subscription.ActionWithArgument.Invoke(instance);
-                                hasBeenHandled = true;
-                            }
-
-                            returnEventArgs.Handled = hasBeenHandled;
-                        }
+                        subscription.Invoke(instance, returnEventArgs);
                     }
                     catch (Exception ex)
                     {
@@ -369,9 +369,9 @@ namespace TinyPubSubLib
         }
 
         /// <summary>
-        /// Scans an object after attributes to hook up to TinyPubSub
+        /// Registers an object by attributes to subscribe to TinyPubSub
         /// </summary>
-        /// <param name="obj">The object to scan</param>
+        /// <param name="obj">The object to register</param>
         public static void Register(object obj)
         {
             //// TODO: EB: Move the reflection code to a separate type, for performance - add a cache (ConcurrentDictionary) to scanned objects and use expressions to invoke the subscriber methods instead of method.Invoke()..

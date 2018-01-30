@@ -248,5 +248,105 @@ namespace TinyPubSub.Tests
             // Assert
             Assert.True(testsuccessful);
         }
+
+        [Fact]
+        public void SubscribeToTest()
+        {
+            // Arrange
+            var testValue = 0;
+            var channel = Guid.NewGuid().ToString();
+
+            TinyPubSubLib.TinyPubSub.SubscribeTo<int>(
+                channel,
+                s => s
+                    .Owner(this)
+                    .Tag("ABC123")
+                    .Action((v, a) =>
+                    {
+                        testValue = v;
+                        a.HaltExecution = true;
+                    }));
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish(channel, 1234);
+
+            // Assert
+            Assert.Equal(1234, testValue);
+        }
+
+        private class ReferenceTest<T>
+        {
+            public ReferenceTest(Action<T> action)
+            {
+                this.Action = action;
+            }
+
+            public Action<T> Action { get; }
+
+            public void DoIt(T value)
+            {
+                this.Action(value);
+            }
+        }
+
+        [Fact]
+        public void SubscribeToStrongReferenceTest()
+        {
+            // First test strong reference
+
+            // Arrange
+            var testValue = 0;
+            var channel = Guid.NewGuid().ToString();
+
+            TinyPubSubLib.TinyPubSub.SubscribeTo<int>(
+                channel,
+                s => s
+                    .Owner(this)
+                    .Tag("ABC123")
+                    .Action(new ReferenceTest<int>(v => testValue = v).DoIt));
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish(channel, 1234);
+
+            // Assert - ensure the reference works before GC
+            Assert.Equal(1234, testValue);
+
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+
+            // Go again
+            TinyPubSubLib.TinyPubSub.Publish(channel, 4321);
+            Assert.Equal(4321, testValue);
+
+        }
+
+        [Fact]
+        public void SubscribeToWeakReferenceTest()
+        {
+            // First test strong reference
+
+            // Arrange
+            var testValue = 0;
+            var channel = Guid.NewGuid().ToString();
+
+            TinyPubSubLib.TinyPubSub.SubscribeTo<int>(
+                channel,
+                s => s
+                    .Owner(this)
+                    .Tag("ABC123")
+                    .WeakReference()
+                    .Action(new ReferenceTest<int>(v => testValue = v).DoIt));
+
+            // Act
+            TinyPubSubLib.TinyPubSub.Publish(channel, 1234);
+
+            // Assert - ensure the reference works before GC
+            Assert.Equal(1234, testValue);
+
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+
+            // Go again, but the value should not have been updated, since the ref obj is GC:ed
+            TinyPubSubLib.TinyPubSub.Publish(channel, 4321);
+            Assert.Equal(1234, testValue);
+        }
     }
 }

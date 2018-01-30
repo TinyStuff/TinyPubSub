@@ -39,6 +39,8 @@ namespace TinyPubSubLib
         bool RemoveAfterUse { get; set; }
 
         object Owner { get; set; }
+
+        void Invoke(object instance, TinyEventArgs returnEventArgs);
     }
 
 }
