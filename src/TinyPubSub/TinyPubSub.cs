@@ -76,6 +76,8 @@ namespace TinyPubSubLib
             return subscription;
         }
 
+        public static event EventHandler<ISubscription> OnSubscriptionRemoved;
+
         /// <summary>
         /// Subscribe to a channel
         /// </summary>
@@ -197,6 +199,7 @@ namespace TinyPubSubLib
                     if (subscription.Tag == tag)
                     {
                         channel.Value.Remove(subscription);
+                        OnSubscriptionRemoved?.Invoke(null, subscription);
                     }
                 }
             }
@@ -220,6 +223,7 @@ namespace TinyPubSubLib
                     if (subscription.Owner == owner)
                     {
                         channel.Value.Remove(subscription);
+                        OnSubscriptionRemoved?.Invoke(owner, subscription);
                     }
                 }
             }
