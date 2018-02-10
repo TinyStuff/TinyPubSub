@@ -22,57 +22,48 @@
  *
  */
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Reflection;
-
 namespace TinyPubSubLib
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
+
     public static class TinyPubSub
     {
-        private static Dictionary<string, List<ISubscription>> _channels = new Dictionary<string, List<ISubscription>>();
+        //// EB: replaced Dictionary<,> with ConcurrentDictionary<,> for thread safety. The use of a dictionary inside the dictionary is due to the fact that there is no standard concurrent hashset nor concurrent list in ".NET *".
+        private static readonly ConcurrentDictionary<string, ConcurrentDictionary<ISubscription, ISubscription>> _channels = new ConcurrentDictionary<string, ConcurrentDictionary<ISubscription, ISubscription>>();
 
-        private static List<ISubscription> GetOrCreateChannel(string channel)
+        private static ConcurrentDictionary<ISubscription, ISubscription> GetOrCreateChannel(string channel)
         {
-            List<ISubscription> subscriptions;
-            if (!_channels.ContainsKey(channel))
-            {
-                subscriptions = new List<ISubscription>();
-                _channels.Add(channel, subscriptions);
-            }
-            else
-            {
-                subscriptions = _channels[channel];
-            }
-            return subscriptions;
+            return _channels.GetOrAdd(channel, key => new ConcurrentDictionary<ISubscription, ISubscription>());
         }
 
+        // EB: Rename to CreateAndAdd?
         private static ISubscription CreateSubscription(object owner, string channel, Action action, bool disableAfterFirstUse = false)
         {
             var current = GetOrCreateChannel(channel);
-            var subscription = new Subscription<string>(owner, action);
-            subscription.RemoveAfterUse = disableAfterFirstUse;
-            current.Add(subscription);
+            var subscription = new Subscription<string>(owner, action, disableAfterFirstUse);
+            current.TryAdd(subscription, subscription);
             return subscription;
         }
 
+        // EB: Rename to CreateAndAdd?
         private static ISubscription CreateSubscription<T>(object owner, string channel, Action<T> action, bool disableAfterFirstUse = false)
         {
             var current = GetOrCreateChannel(channel);
-            var subscription = new Subscription<T>(owner, action);
-            subscription.RemoveAfterUse = disableAfterFirstUse;
-            current.Add(subscription);
+            var subscription = new Subscription<T>(owner, action, disableAfterFirstUse);
+            current.TryAdd(subscription, subscription);
             return subscription;
         }
 
+        // EB: Rename to CreateAndAdd?
         private static ISubscription CreateSubscription<T>(object owner, string channel, Action<T, TinyEventArgs> action, bool disableAfterFirstUse = false)
         {
             var current = GetOrCreateChannel(channel);
-            var subscription = new Subscription<T>(owner, action);
-            subscription.RemoveAfterUse = disableAfterFirstUse;
-            current.Add(subscription);
+            var subscription = new Subscription<T>(owner, action, disableAfterFirstUse);
+            current.TryAdd(subscription, subscription);
             return subscription;
         }
 
@@ -192,13 +183,13 @@ namespace TinyPubSubLib
         /// <param name="tag"></param>
         public static void Unsubscribe(string tag)
         {
-            foreach (var channel in _channels)
+            foreach (var channel in _channels.Values)
             {
-                foreach (var subscription in channel.Value.ToList())
+                foreach (var subscription in channel.Keys)
                 {
                     if (subscription.Tag == tag)
                     {
-                        channel.Value.Remove(subscription);
+                        channel.TryRemove(subscription, out var _);
                         OnSubscriptionRemoved?.Invoke(null, subscription);
                     }
                 }
@@ -208,7 +199,7 @@ namespace TinyPubSubLib
         /// <summary>
         /// Unsubscribes to a channel based on an object owner
         /// </summary>
-        /// <param name="owner"></param>
+        /// <param name="owner">The owner object</param>
 		public static void Unsubscribe(object owner)
         {
             if (owner == null)
@@ -216,13 +207,13 @@ namespace TinyPubSubLib
                 return;
             }
 
-            foreach (var channel in _channels)
+            foreach (var channel in _channels.Values)
             {
-                foreach (var subscription in channel.Value.ToList())
+                foreach (var subscription in channel.Keys)
                 {
                     if (subscription.Owner == owner)
                     {
-                        channel.Value.Remove(subscription);
+                        channel.TryRemove(subscription, out var _);
                         OnSubscriptionRemoved?.Invoke(owner, subscription);
                     }
                 }
@@ -234,10 +225,10 @@ namespace TinyPubSubLib
         /// </summary>
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static void Publish<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
+        /// <typeparam name="T">The type of the instance to pass to the receiver.</typeparam>
+        public static void Publish<T>(string channel, T instance, Action<Exception, ISubscription> onError = null)
         {
-            PublishControlled<T>(channel, instance, OnError);
+            PublishControlled<T>(channel, instance, onError);
         }
 
         /// <summary>
@@ -246,9 +237,9 @@ namespace TinyPubSubLib
         /// <returns>The controlled.</returns>
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
-        public static TinyEventArgs PublishControlled(string channel, string instance, Action<Exception, ISubscription> OnError = null)
+        public static TinyEventArgs PublishControlled(string channel, string instance, Action<Exception, ISubscription> onError = null)
         {
-            return PublishControlled<string>(channel, instance, OnError);
+            return PublishControlled<string>(channel, instance, onError);
         }
 
         /// <summary>
@@ -258,20 +249,19 @@ namespace TinyPubSubLib
         /// <param name="channel">The channel name</param>
         /// <param name="instance">Instance to pass to the receiver.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        public static TinyEventArgs PublishControlled<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
+        public static TinyEventArgs PublishControlled<T>(string channel, T instance, Action<Exception, ISubscription> onError = null)
         {
-            var returnEventArgs = new TinyEventArgs();
-
             if (string.IsNullOrWhiteSpace(channel))
             {
                 throw new ArgumentException("You have to specify a channel to publish to");
             }
 
-            if (_channels.ContainsKey(channel))
-            {
-                var current = _channels[channel];
+            var returnEventArgs = new TinyEventArgs();
 
-                foreach (var subscription in current.OfType<Subscription<T>>().ToList())
+            if (_channels.TryGetValue(channel, out var current))
+            {
+                // EB: ToList removed, since ConcurrentDictionary always returns a copy of the data
+                foreach (var subscription in current.Keys.OfType<Subscription<T>>())
                 {
                     try
                     {
@@ -299,18 +289,18 @@ namespace TinyPubSubLib
                     }
                     catch (Exception ex)
                     {
-                        OnError?.Invoke(ex, subscription);
-					    SendException(ex, subscription.Tag);
+                        onError?.Invoke(ex, subscription);
+                        SendException(ex, subscription.Tag);
                     }
 
                     if (subscription.RemoveAfterUse)
                     {
-						Unsubscribe(subscription.Tag);
+                        Unsubscribe(subscription.Tag);
                     }
 
                     if (returnEventArgs.HaltExecution)
                     {
-						return returnEventArgs;
+                        return returnEventArgs;
                     }
                 }
 
@@ -319,9 +309,10 @@ namespace TinyPubSubLib
                 // subscription.
                 if (typeof(T) != typeof(object))
                 {
-					PublishControlled<object>(channel, instance, OnError);
+                    PublishControlled<object>(channel, instance, onError);
                 }
             }
+
             return returnEventArgs;
         }
 
@@ -352,10 +343,12 @@ namespace TinyPubSubLib
         /// <param name="argument">An optional parameter</param>
         /// <remarks>This method is not blocking, it simply uses a Task.Run(() => Publish(...)) internally
         /// to hand of the call to be handled by someone else.</remarks>
-        public static void PublishAsTask(string channel, string argument = default(string), Action<Exception, ISubscription> OnError = null)
+        public static void PublishAsTask(string channel, string argument = default(string), Action<Exception, ISubscription> onError = null)
         {
             // Add to delayed handle queue
-            Task.Run(() => Publish(channel, argument, OnError)).ConfigureAwait(false);
+            //// EB: Configure await is only required when awaiting a task, not creating a fire and forget task
+            //// Task.Run(() => Publish(channel, argument, OnError)).ConfigureAwait(false);
+            Task.Run(() => Publish(channel, argument, onError));
         }
 
         /// <summary>
@@ -364,9 +357,11 @@ namespace TinyPubSubLib
         /// <param name="channel">The channel to publish to</param>
         /// <param name="argument">An optional parameter</param>
         /// <returns>A task</returns>
-        public static async Task PublishAsync(string channel, string argument = default(string), Action<Exception, ISubscription> OnError = null)
+        public static Task PublishAsync(string channel, string argument = default(string), Action<Exception, ISubscription> onError = null)
         {
-            await Task.Run(() => Publish(channel, argument, OnError));
+            // EB: Not necessary to await the task.
+            ////await Task.Run(() => Publish(channel, argument, OnError));
+            return Task.Run(() => Publish(channel, argument, onError));
         }
 
         /// <summary>
@@ -383,6 +378,8 @@ namespace TinyPubSubLib
         /// <param name="obj">The object to scan</param>
         public static void Register(object obj)
         {
+            //// TODO: EB: Move the reflection code to a separate type, for performance - add a cache (ConcurrentDictionary) to scanned objects and use expressions to invoke the subscriber methods instead of method.Invoke()..
+
             var typeInfo = IntrospectionExtensions.GetTypeInfo(obj.GetType());
 
             foreach (var method in typeInfo.DeclaredMethods)
@@ -393,17 +390,19 @@ namespace TinyPubSubLib
                 {
                     var channel = attribute.Channel;
 
-                    if (method.GetParameters().Any())
+                    var methodParameters = method.GetParameters();
+
+                    if (methodParameters.Length > 0)
                     {
                         // Concept code for subscriptions
-                        var firstParam = method.GetParameters().First();
-                        var paramType = firstParam.ParameterType;
+                        var firstParam = methodParameters.First();
+                        var paramType = firstParam.ParameterType;   // EB: Not used
                         TinyPubSub.Subscribe<object>(obj, channel, (data) => method.Invoke(obj, new object[] { data }));
                     }
                     else
                     {
                         // Register without parameters since the target method has none
-						TinyPubSub.Subscribe(obj, channel, () => method.Invoke(obj, null));
+                        TinyPubSub.Subscribe(obj, channel, () => method.Invoke(obj, null));
                     }
                 }
             }
