@@ -32,16 +32,16 @@ namespace TinyPubSubLib
     /// Represents one subscription
     /// </summary>
     internal class Subscription<T> : ISubscription
-	{
-		public Action Action { get; set; }
+    {
+        public Action Action { get; set; }
 
         public Action<T> ActionWithArgument { get; set; }
 
         public Action<T, TinyEventArgs> ActionWithArgumentAndArgs { get; set; }
 
-        Action<object> ISubscription.ActionWithArgument 
-        { 
-            get 
+        Action<object> ISubscription.ActionWithArgument
+        {
+            get
             {
                 return ActionWithArgument as Action<object>;
             }
@@ -51,34 +51,37 @@ namespace TinyPubSubLib
 
         public Type SubscribeToType { get; set; }
 
-		public object Owner { get; set; }
+        public object Owner { get; set; }
 
         public bool RemoveAfterUse { get; set; }
 
-        internal Subscription () {
+        internal Subscription()
+        {
             Tag = Guid.NewGuid().ToString();
             SubscribeToType = typeof(T);
         }
 
-        public Subscription (Action action) : this()
-		{
-			Action = action;
-		}
+        public Subscription(Action action) : this()
+        {
+            Action = action;
+        }
 
-        public Subscription (Action<T> action) : this()
+        public Subscription(Action<T> action) : this()
         {
             ActionWithArgument = action;
             SubscribeToType = typeof(T);
         }
 
-        public Subscription (object owner, Action action) : this(action)
-		{
-			Owner = owner;
-		}
-
-        public Subscription (object owner, Action<T> action) : this(action)
+        public Subscription(object owner, Action action, bool removeAfterUse = false) : this(action)
         {
-            Owner = owner;
+            this.Owner = owner;
+            this.RemoveAfterUse = removeAfterUse;
+        }
+
+        public Subscription(object owner, Action<T> action, bool removeAfterUse = false) : this(action)
+        {
+            this.RemoveAfterUse = removeAfterUse;
+            this.Owner = owner;
         }
 
         public Subscription(Action<T, TinyEventArgs> action) : this()
@@ -86,9 +89,10 @@ namespace TinyPubSubLib
             ActionWithArgumentAndArgs = action;
         }
 
-        public Subscription(object owner, Action<T, TinyEventArgs> action) : this(action)
+        public Subscription(object owner, Action<T, TinyEventArgs> action, bool removeAfterUse = false) : this(action)
         {
-            Owner = owner;
+            this.Owner = owner;
+            this.RemoveAfterUse = removeAfterUse;
         }
-	}
+    }
 }

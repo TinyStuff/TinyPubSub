@@ -244,7 +244,7 @@ namespace TinyPubSub.Tests
             TinyPubSubLib.TinyPubSub.Subscribe(channel, () => throw new Exception("Boom"));
 
             // Act
-            await TinyPubSubLib.TinyPubSub.PublishAsync(channel, OnError: (ex, s) => testsuccessful = ex.Message == "Boom");
+            await TinyPubSubLib.TinyPubSub.PublishAsync(channel, onError: (ex, s) => testsuccessful = ex.Message == "Boom");
 
             // Assert
             Assert.True(testsuccessful);
