@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using TinyPubSubLib;
 
 namespace TinyPubSub.Tests
 {
@@ -244,6 +245,22 @@ namespace TinyPubSub.Tests
 
             // Act
             await TinyPubSubLib.TinyPubSub.PublishAsync(channel, OnError: (ex, s) => testsuccessful = ex.Message == "Boom");
+
+            // Assert
+            Assert.True(testsuccessful);
+        }
+
+        [Fact]
+        public void PublishWithEventArgsTest()
+        {
+            // Arrange
+            var testsuccessful = true;
+            var channel = Guid.NewGuid().ToString();
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, (string argument, TinyEventArgs args) => args.HaltExecution = true);
+            TinyPubSubLib.TinyPubSub.Subscribe(channel, () => testsuccessful = false); // This subscription should never be called
+
+            // Act
+            TinyPubSubLib.TinyPubSub.PublishControlled(channel);
 
             // Assert
             Assert.True(testsuccessful);

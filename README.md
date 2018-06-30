@@ -1,5 +1,5 @@
 # TinyPubSub
-<del>Worlds smallest</del> A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
+A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
 In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, async publish, non-generic and generic publish/subscribe.
 
 ## Build status
@@ -7,6 +7,8 @@ In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, as
 ![buildstatus](https://io2gamelabs.visualstudio.com/_apis/public/build/definitions/be16d002-5786-41a1-bf3b-3e13d5e80aa0/5/badge)
 
 ## TLDR
+
+What does it do? TinyPubSub lets you run code when an event happens.
 
 Init - if you are using forms, install the TinyPubSub.Forms package
 
@@ -33,7 +35,6 @@ public App ()
     //		};
     MainPage = navPage;
 }
- 
 
 ```
 
@@ -71,6 +72,13 @@ public class MyClass
     }
 }
 
+// Subscription with control to determine if we should prevent the next subscriber on the same channel to handle the event
+// NOTE: Must be triggered by any PublishControlled* method to work. The _ argument is because we need an argument even if it's null
+TinyPubSub.Subscribe("new-duck-added", (_, args) =>
+{
+    args.HaltExecution = true;
+});
+
 ```
 
 Publish
@@ -97,6 +105,14 @@ await TinyPubSub.PublishAsync("new-duck-added", "Ducky McDuckface");
 // Publish with a typed argument
 TinyPubSub.Publish("new-duck-added", new MessageModel() { Name = "Ducky" });
 
+// Publish and wait for the result - can be used to make sure someone has handled it
+var result = TinyPubSub.PublishControlled("new-duck-added");
+var successful = result.Handled;
+
+// Publish controlled with a typed argument
+var result = TinyPubSub.PublishControlled("new-duck-added", new MessageModel() { Name = "Ducky" });
+var successful = result.Handled;
+
 ```
 
 ## WHY SHOULD I USE IT?
@@ -106,6 +122,7 @@ TinyPubSub.Publish("new-duck-added", new MessageModel() { Name = "Ducky" });
 This lib should be used when you want to easily register to events within a small app. It's not meant for data transfer (at least not at this point), it's not thread safe and it's never going to be finished. :)
 
 ### EXAMPLE
+
 I have a view that shows ducks. This is my main view. When I edit ducks on another view and the main page is covered I still want the main view to get new ducks before I return to it. I don't want the MainPage to start loading when it gets displayed. 
 
 The main view can listen for the "ducks-added" event and run an action when that happens. When I create a new function in the system I can trust that if I publish an event on the "ducks-added" channel, all my other views subscribing to that event will get notified.

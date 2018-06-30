@@ -76,6 +76,9 @@ namespace TinyPubSubLib
             return subscription;
         }
 
+        /// <summary>
+        /// Occurs when on subscription removed.
+        /// </summary>
         public static event EventHandler<ISubscription> OnSubscriptionRemoved;
 
         /// <summary>
@@ -135,7 +138,7 @@ namespace TinyPubSubLib
         /// <summary>
         /// Subscribe to a channel that sends an argument
         /// </summary>
-        /// <returns>The subscribe.</returns>
+        /// <returns>The subscription tag</returns>
         /// <param name="channel">The channel name</param>
         /// <param name="action">The action to run</param>
         /// <typeparam name="T">The type to subscribe to.</typeparam>
@@ -146,9 +149,21 @@ namespace TinyPubSubLib
         }
 
         /// <summary>
+        /// Subscribes to a channel with an argument and control flow event
+        /// </summary>
+        /// <returns>The subscription tag</returns>
+        /// <param name="channel">Channel.</param>
+        /// <param name="action">Action.</param>
+        public static string Subscribe(string channel, Action<string, TinyEventArgs> action)
+        {
+            var subscription = CreateSubscription(null, channel, action);
+            return subscription.Tag;
+        }
+
+        /// <summary>
         /// Subscribe to a channel that sends an argument with specified owner
         /// </summary>
-        /// <returns>The subscribe.</returns>
+        /// <returns>The subscription tag</returns>
         /// /// <param name="owner">The owner of the subscription</param> 
         /// <param name="channel">The channel name</param>
         /// <param name="action">The action to run</param>
@@ -163,8 +178,8 @@ namespace TinyPubSubLib
         /// Subscribe to a channel that sends an argument with specified owner and TinyEventArgs to be able to cancle execution and specify if the event has been handled
         /// </summary>
         /// <returns>The subscribe.</returns>
-        /// <param name="owner">Owner.</param>
-        /// <param name="channel">Channel.</param>
+        /// <param name="owner">The owner of the subscription - used for automatic deregistration</param>
+        /// <param name="channel">The channel to subscribe to</param>
         /// <param name="action">Action with T and TinyEventArgs for execution handling and publishreturn.</param>
         /// <typeparam name="T">The type to subscribe to.</typeparam>
         public static string Subscribe<T>(object owner, string channel, Action<T, TinyEventArgs> action)
@@ -176,8 +191,8 @@ namespace TinyPubSubLib
         /// <summary>
         /// Subscribe to a channel that sends an argument with specified owner and TinyEventArgs to be able to cancle execution and specify if the event has been handled
         /// </summary>
-        /// <returns>The subscribe.</returns>
-        /// <param name="channel">Channel.</param>
+        /// <returns>The subscription tag</returns>
+        /// <param name="channel">The channel to subscribe to</param>
         /// <param name="action">Action with T and TinyEventArgs for execution handling and publishreturn.</param>
         /// <typeparam name="T">The type to subscribe to.</typeparam>
         public static string Subscribe<T>(string channel, Action<T, TinyEventArgs> action)
@@ -230,10 +245,10 @@ namespace TinyPubSubLib
         }
 
         /// <summary>
-        /// Publish an event the specified channel with instance argument.
+        /// Publish an event to the specified channel with instance argument.
         /// </summary>
         /// <param name="channel">The channel name</param>
-        /// <param name="instance">Instance to pass to the receiver.</param>
+        /// <param name="instance">Instance of an object to pass to the receiver. Think argument.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static void Publish<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
         {
@@ -241,22 +256,46 @@ namespace TinyPubSubLib
         }
 
         /// <summary>
-        /// Publish an event the specified channel with instance argument and returns if the event is handled.
+        /// Publish a controlled event to the specified channel with instance argument and returns when the event is handled.
         /// </summary>
-        /// <returns>The controlled.</returns>
+        /// <returns>The result of the call</returns>
         /// <param name="channel">The channel name</param>
-        /// <param name="instance">Instance to pass to the receiver.</param>
-        public static TinyEventArgs PublishControlled(string channel, string instance, Action<Exception, ISubscription> OnError = null)
+        /// <param name="instance">Instance of an object to pass to the receiver. Think argument.</param>
+        public static TinyEventArgs PublishControlled(string channel, string instance = default(string), Action<Exception, ISubscription> OnError = null)
         {
             return PublishControlled<string>(channel, instance, OnError);
         }
 
         /// <summary>
-        /// Publish an event the specified channel with instance argument and returns if the event is handled.
+        /// Publish a controlled event to the specified channel with instance argument and returns when the event is handled.
         /// </summary>
-        /// <returns>The controlled.</returns>
+        /// <returns>The result of the call</returns>
         /// <param name="channel">The channel name</param>
-        /// <param name="instance">Instance to pass to the receiver.</param>
+        /// <param name="argument">The argument to pass</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public async static Task<TinyEventArgs> PublishControlledAsync(string channel, string argument = default(string), Action<Exception, ISubscription> OnError = null)
+        {
+            return await Task.Run(() => PublishControlled(channel, argument, OnError)).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Publish a controlled event to the specified channel with instance argument and returns when the event is handled.
+        /// </summary>
+        /// <returns>The result of the call</returns>
+        /// <param name="channel">The channel name</param>
+        /// <param name="instance">Instance of an object to pass to the receiver. Think argument.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        public async static Task<TinyEventArgs> PublishControlledAsync<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
+        {
+            return await Task.Run(() => PublishControlled(channel, instance, OnError)).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Publish an event to the specified channel with instance argument and returns when the event is handled.
+        /// </summary>
+        /// <returns>The result of the call</returns>
+        /// <param name="channel">The channel name</param>
+        /// <param name="instance">Instance of an object to pass to the receiver. Think argument.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public static TinyEventArgs PublishControlled<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
         {
@@ -356,6 +395,18 @@ namespace TinyPubSubLib
         {
             // Add to delayed handle queue
             Task.Run(() => Publish(channel, argument, OnError)).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Publish using Task.Run
+        /// </summary>
+        /// <param name="channel">The channel to publish to</param>
+        /// <param name="instance">An instance of an object to pass to the handler of the event</param>
+        /// <remarks>This method is not blocking, it simply uses a Task.Run(() => Publish(...)) internally
+        /// to hand of the call to be handled by someone else.</remarks>
+        public static void PublishAsTask<T>(string channel, T instance, Action<Exception, ISubscription> OnError = null)
+        {
+            Task.Run(() => Publish(channel, instance, OnError));
         }
 
         /// <summary>

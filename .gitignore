@@ -44,3 +44,6 @@ Thumbs.db
 
 #cake
 tools/
+
+#vscode
+.vscode/
