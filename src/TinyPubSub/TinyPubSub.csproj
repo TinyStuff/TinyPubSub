@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
     <RootNamespace>TinyPubSubLib</RootNamespace>
+    <Configurations>Release-CI;Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CI|AnyCPU'" />

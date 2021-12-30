@@ -51,7 +51,7 @@ namespace TinyPubSubLib
 
         public Type SubscribeToType { get; set; }
 
-        public object Owner { get; set; }
+        public WeakReference Owner { get; set; }
 
         public bool RemoveAfterUse { get; set; }
 
@@ -74,14 +74,14 @@ namespace TinyPubSubLib
 
         public Subscription(object owner, Action action, bool removeAfterUse = false) : this(action)
         {
-            this.Owner = owner;
+            this.Owner = new WeakReference(owner);
             this.RemoveAfterUse = removeAfterUse;
         }
 
         public Subscription(object owner, Action<T> action, bool removeAfterUse = false) : this(action)
         {
             this.RemoveAfterUse = removeAfterUse;
-            this.Owner = owner;
+            this.Owner = new WeakReference(owner);
         }
 
         public Subscription(Action<T, TinyEventArgs> action) : this()
@@ -91,7 +91,7 @@ namespace TinyPubSubLib
 
         public Subscription(object owner, Action<T, TinyEventArgs> action, bool removeAfterUse = false) : this(action)
         {
-            this.Owner = owner;
+            this.Owner = new WeakReference(owner);
             this.RemoveAfterUse = removeAfterUse;
         }
     }

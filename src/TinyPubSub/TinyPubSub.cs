@@ -26,6 +26,7 @@ namespace TinyPubSubLib
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -224,13 +225,24 @@ namespace TinyPubSubLib
 
             foreach (var channel in _channels.Values)
             {
+                var subscriptionsToRemove = new List<ISubscription>();
+
                 foreach (var subscription in channel.Keys)
                 {
-                    if (subscription.Owner == owner)
+                    if(subscription.Owner.Target == null)
+                    {
+                        subscriptionsToRemove.Add(subscription);
+                    }
+                    else if (subscription.Owner.Target == owner)
                     {
                         channel.TryRemove(subscription, out var _);
                         OnSubscriptionRemoved?.Invoke(owner, subscription);
                     }
+                }
+
+                foreach(var subscription in subscriptionsToRemove)
+                {
+                    channel.TryRemove(subscription,out _);
                 }
             }
         }
@@ -299,11 +311,18 @@ namespace TinyPubSubLib
 
             if (_channels.TryGetValue(channel, out var current))
             {
+                var subscriptinsToRemove = new List<ISubscription>();
+
                 // EB: ToList removed, since ConcurrentDictionary always returns a copy of the data
                 foreach (var subscription in current.Keys.OfType<Subscription<T>>())
                 {
                     try
                     {
+                        if(subscription.Owner.Target == null)
+                        {
+                            subscriptinsToRemove.Add(subscription);
+                        }
+                        
                         if (subscription.ActionWithArgumentAndArgs != null)
                         {
                             subscription.ActionWithArgumentAndArgs.Invoke(instance, returnEventArgs);
@@ -341,6 +360,11 @@ namespace TinyPubSubLib
                     {
                         return returnEventArgs;
                     }
+                }
+
+                foreach(var subscription in subscriptinsToRemove)
+                {
+                    current.TryRemove(subscription, out _);
                 }
 
                 // Concept code - fall back to calling each with object

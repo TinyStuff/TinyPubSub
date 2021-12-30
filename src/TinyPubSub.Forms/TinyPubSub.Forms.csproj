@@ -2,15 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.1</TargetFramework>
-    <PackageTargetFallback>
-      portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20
-    </PackageTargetFallback>
+    <Configurations>Release-CI;Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CI|AnyCPU'" />
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="2.3.4.247" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2291" />
   </ItemGroup>
 
   <ItemGroup>
