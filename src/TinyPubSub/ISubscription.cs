@@ -38,7 +38,7 @@ namespace TinyPubSubLib
 
         bool RemoveAfterUse { get; set; }
 
-        object Owner { get; set; }
+        WeakReference Owner { get; set; }
     }
 
 }
