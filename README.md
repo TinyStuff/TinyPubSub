@@ -1,10 +1,14 @@
 # TinyPubSub
-A really small pub/sub thingy created mostly for Xamarin Forms but should also work else where...
+A really small pub/sub thingy created for .net!
 In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, async publish, non-generic and generic publish/subscribe.
+
+## Roadmap
+
+* V2 is under development - the aim is to modernize the lib to make use of new C# language features and runtimes.
 
 ## Build status
 
-![buildstatus](https://io2gamelabs.visualstudio.com/_apis/public/build/definitions/be16d002-5786-41a1-bf3b-3e13d5e80aa0/5/badge)
+[![.NET](https://github.com/TinyStuff/TinyPubSub/actions/workflows/BuildAndTest.yml/badge.svg)](https://github.com/TinyStuff/TinyPubSub/actions/workflows/BuildAndTest.yml)
 
 ## TLDR
 
