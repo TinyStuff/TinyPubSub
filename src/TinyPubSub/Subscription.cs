@@ -23,8 +23,6 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace TinyPubSubLib
 {
@@ -33,19 +31,21 @@ namespace TinyPubSubLib
     /// </summary>
     internal class Subscription<T> : ISubscription
     {
+        /// <summary>
+        /// Order of executing subscriptions.
+        /// </summary>
+        /// <remarks>Since a user can halt execution of subscriptions, the order in which they
+        /// are added matters. It was a List&lt;T&gt; earlier, now i't a Dictionary&lt;T&gt; which
+        /// does not guarantee the order when enumerating. So we need to sort.</remarks>
+        public int Order { get; set; }
+        
         public Action Action { get; set; }
 
         public Action<T> ActionWithArgument { get; set; }
 
         public Action<T, TinyEventArgs> ActionWithArgumentAndArgs { get; set; }
 
-        Action<object> ISubscription.ActionWithArgument
-        {
-            get
-            {
-                return ActionWithArgument as Action<object>;
-            }
-        }
+        Action<object> ISubscription.ActionWithArgument => ActionWithArgument as Action<object>;
 
         public string Tag { get; set; }
 
@@ -61,38 +61,47 @@ namespace TinyPubSubLib
             SubscribeToType = typeof(T);
         }
 
-        public Subscription(Action action) : this()
+        public Subscription(Action action, bool removeAfterUse = false, int order = 0) : this()
         {
             Action = action;
+            RemoveAfterUse = removeAfterUse;
+            Order = order;
         }
 
-        public Subscription(Action<T> action) : this()
+        public Subscription(Action<T> action, bool removeAfterUse = false, int order = 0) : this()
         {
             ActionWithArgument = action;
             SubscribeToType = typeof(T);
+            RemoveAfterUse = removeAfterUse;
+            Order = order;
         }
 
-        public Subscription(object owner, Action action, bool removeAfterUse = false) : this(action)
+        public Subscription(object owner, Action action, bool removeAfterUse = false, int order = 0) : this(action)
         {
-            this.Owner = new WeakReference(owner);
-            this.RemoveAfterUse = removeAfterUse;
+            Owner = new WeakReference(owner);
+            RemoveAfterUse = removeAfterUse;
+            Order = order;
         }
 
-        public Subscription(object owner, Action<T> action, bool removeAfterUse = false) : this(action)
+        public Subscription(object owner, Action<T> action, bool removeAfterUse = false, int order = 0) : this(action)
         {
-            this.RemoveAfterUse = removeAfterUse;
-            this.Owner = new WeakReference(owner);
+            RemoveAfterUse = removeAfterUse;
+            Owner = new WeakReference(owner);
+            Order = order;
         }
 
-        public Subscription(Action<T, TinyEventArgs> action) : this()
+        public Subscription(Action<T, TinyEventArgs> action, bool removeAfterUse = false, int order = 0) : this()
         {
             ActionWithArgumentAndArgs = action;
+            RemoveAfterUse = removeAfterUse;
+            Order = order;
         }
 
-        public Subscription(object owner, Action<T, TinyEventArgs> action, bool removeAfterUse = false) : this(action)
+        public Subscription(object owner, Action<T, TinyEventArgs> action, bool removeAfterUse = false, int order = 0) : this(action)
         {
-            this.Owner = new WeakReference(owner);
-            this.RemoveAfterUse = removeAfterUse;
+            Owner = new WeakReference(owner);
+            RemoveAfterUse = removeAfterUse;
+            Order = order;
         }
     }
 }

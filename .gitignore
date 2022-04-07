@@ -1,6 +1,7 @@
 #Autosave files
 *~
 .vs/
+.idea/
 
 #build
 [Oo]bj/
