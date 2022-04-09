@@ -4,6 +4,7 @@
     <TargetFramework>netstandard1.1</TargetFramework>
     <RootNamespace>TinyPubSubLib</RootNamespace>
     <Configurations>Release-CI;Debug;Release</Configurations>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CI|AnyCPU'" />
@@ -15,7 +16,7 @@
     <Description>A very simple pub/sub implementation for .net/xamarin.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Formatted package name</PackageReleaseNotes>
-    <Copyright>Copyright 2017 - Johan Karlsson and Daniel Hindrikes</Copyright>
+    <Copyright>Copyright 2017-2022 - Johan Karlsson and Daniel Hindrikes</Copyright>
     <PackageTags>Xamarin pubsub</PackageTags>
     <PackageIconUrl>http://i.imgur.com/p0xJYYC.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/johankson/TinyPubSub</PackageProjectUrl>
