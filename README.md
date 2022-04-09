@@ -8,7 +8,7 @@ In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, as
 
 ## Build status
 
-[![.NET](https://github.com/TinyStuff/TinyPubSub/actions/workflows/BuildAndTest.yml/badge.svg)](https://github.com/TinyStuff/TinyPubSub/actions/workflows/BuildAndTest.yml)
+[![CI](https://github.com/TinyStuff/TinyPubSub/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/TinyStuff/TinyPubSub/actions/workflows/main.yml)
 
 ## TLDR
 
