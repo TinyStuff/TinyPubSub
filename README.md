@@ -257,3 +257,7 @@ MainPage = navPage;
 <del>This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack. There is also a NavigationPage.PoppedToRoot event, but looking at the Xamarin Forms code it simply clears the children without calling popped for each page. I've started a thread about this at the xamarin forums. </del>
 
 I got some new code into the Xamarin Forms Core Navigation stuff so now we can get information on what pages that are popped.
+
+# CI
+
+Pipeline was inspired by this post: https://www.jamescroft.co.uk/how-to-build-publish-nuget-packages-with-github-actions/
