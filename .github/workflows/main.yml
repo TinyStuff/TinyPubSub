@@ -45,7 +45,7 @@ jobs:
       run: dotnet build ./src/TinyPubSub --no-restore --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
 
     - name: Run tests
-      run: dotnet test ./src/TinyPubSub.Tests /p:Configuration=$env:BUILD_CONFIG --verbosity normal
+      run: dotnet test ./src/TinyPubSub.Tests /p:Configuration=$BUILD_CONFIG --verbosity normal
       
     - name: Publish
       if: startsWith(github.ref, 'refs/heads/release')
