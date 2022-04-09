@@ -1,10 +1,12 @@
 # TinyPubSub
+
 A really small pub/sub thingy created for .net!
 In memory, in-process, tiny and shiny. Sync publish, fire-and-forget publish, async publish, non-generic and generic publish/subscribe.
 
 ## Roadmap
 
-* V2 is under development - the aim is to modernize the lib to make use of new C# language features and runtimes.
+- V2 is under development - the aim is to modernize the lib to make use of new C# language features and runtimes.
+- TinyPubSub 2.0.0-preview4 is available as a nuget (<https://www.nuget.org/packages/TinyPubSub/2.0.0-preview4>)
 
 ## Build status
 
@@ -127,7 +129,7 @@ This lib should be used when you want to easily register to events within a smal
 
 ### EXAMPLE
 
-I have a view that shows ducks. This is my main view. When I edit ducks on another view and the main page is covered I still want the main view to get new ducks before I return to it. I don't want the MainPage to start loading when it gets displayed. 
+I have a view that shows ducks. This is my main view. When I edit ducks on another view and the main page is covered I still want the main view to get new ducks before I return to it. I don't want the MainPage to start loading when it gets displayed.
 
 The main view can listen for the "ducks-added" event and run an action when that happens. When I create a new function in the system I can trust that if I publish an event on the "ducks-added" channel, all my other views subscribing to that event will get notified.
 
@@ -156,7 +158,7 @@ TinyPubSub.Subscribe(this, TinyExceptionDefaultChannel, (TinyException ex) => { 
 You can also send an error handler directly into the publish call.
 
 ```csharp
-TinyPubSub.Publish(this, "new-duck-added", () => HandleDuck(), onError: (ex, s) => 
+TinyPubSub.Publish(this, "new-duck-added", () => HandleDuck(), onError: (ex, s) =>
     {
         // ex is the Exception that was thrown
         // s is the subscription that failed
@@ -164,13 +166,14 @@ TinyPubSub.Publish(this, "new-duck-added", () => HandleDuck(), onError: (ex, s) 
 ```
 
 ### Forms
+
 If you are using TinyPubSub from Xamarin forms, install this package and call the init method as described at the top. You don't have to install any other package.
 
 [https://www.nuget.org/packages/tinypubsub.forms](https://www.nuget.org/packages/tinypubsub.forms)
 
 ### Vanilla
-[https://www.nuget.org/packages/tinypubsub](https://www.nuget.org/packages/tinypubsub)
 
+[https://www.nuget.org/packages/tinypubsub](https://www.nuget.org/packages/tinypubsub)
 
 ## USAGE
 
@@ -198,8 +201,8 @@ await TinyPubSub.PublishAsync("new-duck-added", "optional argument");
 
 If you are using the Xamarin Forms version (TinyPubSub.Forms) and call the Init(..) method as described at the top of this page, then you have no worries. The lib will take care of deregistration just in time given that you take two things into consideration.
 
-* You register your subscriptions from the ViewModel (whatever object you bind to BindingContext) or the page it self
-* You pass in `this` into the subscription registration like `TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });`
+- You register your subscriptions from the ViewModel (whatever object you bind to BindingContext) or the page it self
+- You pass in `this` into the subscription registration like `TinyPubSub.Subscribe(this, "new-duck-added", () => { RebindDuckGui(); });`
 
 If you use the vanilla version, continue reading.
 
@@ -254,6 +257,7 @@ navpage.PoppedToRoot += (s, args) =>
 			};
 MainPage = navPage;
 ```
+
 <del>This works as long as PopToRoot isn't called and you are more than one level deep in the navigation stack. There is also a NavigationPage.PoppedToRoot event, but looking at the Xamarin Forms code it simply clears the children without calling popped for each page. I've started a thread about this at the xamarin forums. </del>
 
 I got some new code into the Xamarin Forms Core Navigation stuff so now we can get information on what pages that are popped.
