@@ -12,13 +12,13 @@
   <PropertyGroup>
     <PackageId>TinyPubSub</PackageId>
     <Authors>johankson and dhindrik</Authors>
-    <Description>A very simple pub/sub implementation for .net/xamarin.</Description>
+    <Description>A very simple pub/sub implementation for .net.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Formatted package name</PackageReleaseNotes>
     <Copyright>Copyright 2017-2022 - Johan Karlsson and Daniel Hindrikes</Copyright>
-    <PackageTags>Xamarin pubsub</PackageTags>
+    <PackageTags>PubSub .net</PackageTags>
     <PackageIconUrl>http://i.imgur.com/p0xJYYC.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/johankson/TinyPubSub</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/TinyStuff/TinyPubSub</PackageProjectUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
   </PropertyGroup>
 
