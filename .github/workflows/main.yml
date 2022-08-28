@@ -42,7 +42,7 @@ jobs:
       - name: Restore dependencies
         run: nuget restore ./src/TinyPubSub.sln
 
-         - name: Restore dependencies
+      - name: Restore dependencies
         run: dotnet restore ./src/TinyPubSub/TinyPubSub.csproj
 
       - name: Build
