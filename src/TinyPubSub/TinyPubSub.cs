@@ -37,6 +37,8 @@ namespace TinyPubSubLib
     {
         private static readonly ConcurrentDictionary<string, ConcurrentDictionary<ISubscription, ISubscription>> Channels = new ConcurrentDictionary<string, ConcurrentDictionary<ISubscription, ISubscription>>();
         private static int order;
+
+        private static object genericOwner = new {};
         
         private static ConcurrentDictionary<ISubscription, ISubscription> GetOrCreateChannel(string channel)
         {
@@ -61,7 +63,12 @@ namespace TinyPubSubLib
         private static ISubscription CreateAndAdd<T>(object owner, string channel, Action<T> action, bool disableAfterFirstUse = false)
         {
             Interlocked.Increment(ref order);
-            
+
+            if (owner == null)
+            {
+                owner = genericOwner;
+            }
+
             var current = GetOrCreateChannel(channel);
             var subscription = new Subscription<T>(owner, action, disableAfterFirstUse, order);
             current.TryAdd(subscription, subscription);
@@ -71,7 +78,12 @@ namespace TinyPubSubLib
         private static ISubscription CreateAndAdd<T>(object owner, string channel, Action<T, TinyEventArgs> action, bool disableAfterFirstUse = false)
         {
             Interlocked.Increment(ref order);
-            
+
+            if(owner == null)
+            {
+                owner = genericOwner;
+            }
+
             var current = GetOrCreateChannel(channel);
             var subscription = new Subscription<T>(owner, action, disableAfterFirstUse, order);
             current.TryAdd(subscription, subscription);
@@ -91,7 +103,7 @@ namespace TinyPubSubLib
         /// <returns>A tag that can be used to unsubscribe.</returns>
         public static string Subscribe(string channel, Action action)
         {
-            var subscription = CreateAndAdd(null, channel, action);
+            var subscription = CreateAndAdd(genericOwner, channel, action);
             return subscription.Tag;
         }
 
@@ -103,7 +115,7 @@ namespace TinyPubSubLib
         /// <returns>A tag that can be used to unsubscribe.</returns>
         public static string Subscribe(string channel, Action<string> action)
         {
-            var subscription = CreateAndAdd<string>(null, channel, action);
+            var subscription = CreateAndAdd<string>(genericOwner, channel, action);
             return subscription.Tag;
         }
 
@@ -146,7 +158,7 @@ namespace TinyPubSubLib
         /// <typeparam name="T">The type to subscribe to.</typeparam>
         public static string Subscribe<T>(string channel, Action<T> action)
         {
-            var subscription = CreateAndAdd<T>(null, channel, action);
+            var subscription = CreateAndAdd<T>(genericOwner, channel, action);
             return subscription.Tag;
         }
 
@@ -158,7 +170,7 @@ namespace TinyPubSubLib
         /// <param name="action">The action to execute.</param>
         public static string Subscribe(string channel, Action<string, TinyEventArgs> action)
         {
-            var subscription = CreateAndAdd(null, channel, action);
+            var subscription = CreateAndAdd(Channels, channel, action);
             return subscription.Tag;
         }
 
@@ -199,7 +211,7 @@ namespace TinyPubSubLib
         /// <typeparam name="T">The type to subscribe to.</typeparam>
         public static string Subscribe<T>(string channel, Action<T, TinyEventArgs> action)
         {
-            var subscription = CreateAndAdd<T>(null, channel, action);
+            var subscription = CreateAndAdd<T>(genericOwner, channel, action);
             return subscription.Tag;
         }
 
@@ -334,6 +346,7 @@ namespace TinyPubSubLib
                     if (subscription.Owner.Target == null)
                     {
                         subscriptionsToRemove.Add(subscription);
+                        continue;
                     }
                         
                     if (subscription.ActionWithArgumentAndArgs != null)
